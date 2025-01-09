@@ -7,6 +7,6 @@ metadata:
     app: admin-ui
 data:
   .env: |
-      REACT_APP_API_URL= http://13.203.78.179:32003 
+      REACT_APP_API_URL= http://admin-api-svc:3000
 
-# This needs tobe changed to the external IP of the admin-api service
+# This needs tobe changed to the external IP of the admin-api service 
