@@ -2,9 +2,10 @@
 name: NetFlix Clone CI
 
 on:
-    push:
-      branches:
-        - main
+  workflow_dispatch
+    # push:
+    #   branches:
+    #     - main
 
 env:
   TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
