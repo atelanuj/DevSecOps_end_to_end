@@ -1,42 +1,45 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-ui
-  namespace: user
+  name: admin-ui
+  namespace: admin
   labels:
-    app: user-ui
+    name:  admin-ui
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: user-ui
-      module: user
+      app: admin-ui
   template:
     metadata:
       labels:
-        app: user-ui
-        module: user
+        app: admin-ui
+        module: admin
     spec:
       volumes:
-        - name: user-ui-vl
+        - name: admin-ui-vl
           configMap:
-            name: user-ui-cm
+            name: admin-ui-cm
+      nodeSelector:
+        instance: admin # Need to set this
       containers:
-      - image: 585768154650.dkr.ecr.ap-south-1.amazonaws.com/user-ui:1.0
-        name: user-ui
+      - name: admin-ui
+        image: # NEED to be added
+        ports: 
+        - containerPort: 3000
+          name: http
         securityContext:
           runAsNonRoot: true
           runAsUser: 1001
           runAsGroup: 1001
-        ports:
-        - containerPort: 3000
-          name: http
         resources:
           requests:
-            cpu: "250m"
             memory: "1Gi"
-          limits:
-            cpu: "500m"
+            cpu: "250m"
+          limits: 
             memory: "2Gi"
+            cpu: "500m"
         livenessProbe:
           httpGet:
             path: /health
@@ -50,6 +53,21 @@ spec:
           initialDelaySeconds: 30
           timeoutSeconds: 10
         volumeMounts:
-          - name: user-ui-vl
+          - name: admin-ui-vl
             mountPath: /app/.env
             subPath: .env
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-ui-svc
+  namespace: admin
+spec:
+  type: ClusterIP
+  selector:
+    app: admin-ui
+    module: admin
+  ports:
+  - port: 3000
+    targetPort: 3000

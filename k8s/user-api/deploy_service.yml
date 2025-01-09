@@ -1,15 +1,16 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: user-api
-  labels:
-    name:  user-api
   namespace: user
+  labels:
+    name: user-api
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: user-api
-      module: user
   template:
     metadata:
       labels:
@@ -17,45 +18,57 @@ spec:
         module: user
     spec:
       nodeSelector:
-        module: user
+        instance: user # Need to set this
       containers:
-      - image: 585768154650.dkr.ecr.ap-south-1.amazonaws.com/user-api:1.0
-        name: user-api
+      - name: user-api
+        image: # NEED to be added
+        ports: 
+        - containerPort: 1004
+          name: http
         securityContext:
           runAsNonRoot: true
           runAsUser: 1001
           runAsGroup: 1001
-        ports:
-        - containerPort: 1025
-          name: http
         env:
           - name: MONGO_URL
             valueFrom:
               secretKeyRef:
-                name: user-api-secrets
+                name: mongo-db-secrets
                 key: connectionstring
-          - name: PORT 
-            value: "1025"
-          - name: ADMIN_EMAIL
-            value: admin@deekshithsn.co.in
+          - name: PORT
+            value: "1004"
         resources:
           requests:
-            cpu: "250m"
             memory: "1Gi"
-          limits:
-            cpu: "500m"
+            cpu: "250m"
+          limits: 
             memory: "2Gi"
+            cpu: "500m"
         livenessProbe:
           httpGet:
             path: /api/health
-            port: 1025
+            port: 1004
           initialDelaySeconds: 90
           timeoutSeconds: 10
         readinessProbe:
           httpGet:
             path: /api/health
-            port: 1025
+            port: 1004
           initialDelaySeconds: 30
           timeoutSeconds: 10
-        
-      
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-api-svc
+  namespace: user
+spec:
+  selector:
+    app: user-api
+    module: user
+  ports:
+    - protocol: TCP
+      port: 1004
+      targetPort: 1004
+  type: ClusterIP
