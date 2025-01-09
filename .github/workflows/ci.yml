@@ -1,0 +1,124 @@
+---
+name: NetFlix Clone CI
+
+on:
+    push:
+      branches:
+        - main
+
+env:
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  # DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }}
+
+jobs:
+    BUILD:
+        name: NetFlix Clone CI
+        runs-on: ubuntu-latest
+        steps:
+            - name: Code Checkout
+              uses: actions/checkout@v4
+              with:
+                persist-credentials: false
+                fetch-depth: 0
+
+            - name: Install JAVA latest
+              uses: actions/setup-java@v4
+              with:
+                distribution: 'temurin' # See 'Supported distributions' for available options
+                java-version: '21'
+                java-package: 'jdk'
+                check-latest: true
+
+            # - name: SonarQube Scan
+            #   uses: SonarSource/sonarqube-scan-action@v4.2.1
+            #   env:
+            #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #     SONAR_TOKEN: ${{env.SONAR_TOKEN}}
+            #     SONAR_HOST_URL: ${{env.SONAR_HOST_URL}}
+
+            # - name: SonarQube Server Quality Gate check
+            #   id: sonarqube-quality-gate-check
+            #   uses: sonarsource/sonarqube-quality-gate-action@master
+            #   with:
+            #     pollingTimeoutSec: 600
+            #   timeout-minutes: 8
+            #   env:
+            #     SONAR_TOKEN: $SONAR_TOKEN
+            #     SONAR_HOST_URL: $SONAR_HOST_URL #OPTIONAL
+
+            # - name: "Example show SonarQube Server Quality Gate Status value"
+            #   run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+
+            # - name: Run Datree k8s Manifests Policy Check
+            #   uses: datreeio/action-datree@main
+            #   with:
+            #     path: 'kubernetes/*.yml'
+            #     cliArguments: '--only-k8s-files'
+
+            
+            # - name: OWASP Dependency check
+            #   uses: dependency-check/Dependency-Check_Action@main
+            #   continue-on-error: true
+            #   id: Depcheck
+            #   env:
+            #     JAVA_HOME: /opt/jdk
+            #   with:
+            #     project: 'netflix'
+            #     path: '.'
+            #     format: 'HTML'
+            #     out: 'reports' # this is the default, no need to specify unless you wish to override it
+            #     args: >
+            #         --failOnCVSS 7
+            #         --enableRetired
+
+            # - name: Upload artifacts
+            #   uses: actions/upload-artifact@v4
+            #   if: ${{ always() }}
+            #   with:
+            #     name: OWASP-dependecy-report
+            #     path: './reports/dependency-check-report.html'
+        
+            # - name: Run Trivy vulnerability scanner on filesystem
+            #   uses: aquasecurity/trivy-action@0.28.0
+            #   with:
+            #     scan-type: 'fs'
+            #     ignore-unfixed: true
+            #     format: 'sarif'
+            #     output: 'trivy-results.sarif'
+            #     severity: 'CRITICAL'
+
+            - name: Docker BUILD
+              run: |
+                docker build --build-arg API_KEY=${{env.TMDB_API_KEY}} -t netflix .
+
+            # - name: Run Trivy vulnerability scanner on Docker image
+            #   uses: aquasecurity/trivy-action@0.28.0
+            #   continue-on-error: true
+            #   with:
+            #       image-ref: 'netflix'
+            #       format: 'table'
+            #       exit-code: '1'
+            #       ignore-unfixed: true
+            #       vuln-type: 'os,library'
+            #       severity: 'CRITICAL,HIGH'
+            
+            - name: Docker TAG & PUSH
+              run: |
+                docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASS }}
+                docker tag netflix anujatel/netflix:${{github.run_number}}
+                docker push anujatel/netflix:${{github.run_number}}
+              
+            - name: Update the deployment file
+              run: | 
+                sed -i 's/anujatel\/netflix:.*/anujatel\/netflix:${{github.run_number}}/' Kubernetes/deployment.yml
+                git config --local user.email "github-actions[bot]@users.noreply.github.com"
+                git config --local user.name "github-actions[bot]"
+                git commit -a -m "Updated the Image tag to ${{github.run_number}}"
+
+            - name: Deploy to Kubernetes
+              uses: ad-m/github-push-action@master
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  branch: ${{ github.ref }}
