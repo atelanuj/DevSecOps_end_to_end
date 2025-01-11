@@ -26,12 +26,10 @@ jobs:
         with:
           fetch-depth: 0
 
-
-
-      - name: test
-        run: | 
-          # git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | grep "^.github/workflows/ci.yml"
-          git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | grep "^admin-ui/"
+      # - name: test
+      #   run: | 
+      #     # git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | grep "^.github/workflows/ci.yml"
+      #     git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | grep "^admin-ui/"
 
       - name: Check for changes
         id: check
