@@ -24,13 +24,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: test
-        run: | 
-          echo "before=$(git rev-parse HEAD~1)" >> $GITHUB_ENV
-          echo "sha=$(git rev-parse HEAD )" >> $GITHUB_ENV
-          echo "${{ env.before}}"
-          echo "${{ env.sha}}"
-          # git diff --name-only "${{ env.before }}" "${{ env.sha }}" 
+      - name: Set the value
+        id: step_one
+        run: |
+            echo "FOO=$(git status)" >> $GITHUB_ENV
+      - name: Use the value
+        id: step_two
+        run: |
+            echo "${{ env.FOO }}"
+
+      # - name: test
+      #   run: | 
+      #     echo "before=$(git rev-parse HEAD~1)" >> $GITHUB_ENV
+      #     echo "sha=$(git rev-parse HEAD )" >> $GITHUB_ENV
+      #     echo "${{ env.before}}"
+      #     echo "${{ env.sha}}"
+      #     # git diff --name-only "${{ env.before }}" "${{ env.sha }}" 
 
       - name: Check for changes
         id: check
