@@ -26,9 +26,9 @@ jobs:
 
       - name: test
         run: | 
-          echo "before = ${{ github.event.before }}"
-          echo "sha = ${{ github.sha }}"
-          git diff ${{ github.sha }} ${{ github.event.before }} 
+          # echo "before = ${{ github.event.before }}"
+          # echo "sha = ${{ github.sha }}"
+          git diff --name-only ${{ github.sha }} ${{ github.event.before }} 
 
       - name: Check for changes
         id: check
