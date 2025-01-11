@@ -21,7 +21,7 @@ spec:
         instance: admin # Need to set this
       containers:
       - name: admin-api
-        image: # NEED to be added
+        image: anujatel/admin-api:latest
         ports: 
         - containerPort: 1004
           name: http
