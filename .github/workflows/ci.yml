@@ -6,11 +6,11 @@ on:
   push:
     branches:
       - main
-    paths:
-      - admin-ui/Dockerfile
-      - admin-api/Dockerfile
-      - user-ui/Dockerfile
-      - user-api/Dockerfile
+    # paths:
+    #   - admin-ui/Dockerfile
+    #   - admin-api/Dockerfile
+    #   - user-ui/Dockerfile
+    #   - user-api/Dockerfile
 
 jobs:
   detect-changes:
