@@ -28,8 +28,7 @@ jobs:
         id: check
         run: |
           # Check if files in the admin-ui directory have changed
-          
-          if git diff ${{ github.event.before }} ${{ github.sha }} | grep "^admin-ui/"; then
+          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "^admin-ui/"; then
             echo "admin-ui-changed=true" >> $GITHUB_ENV
             echo "admin-ui-changed=true" >> $GITHUB_OUTPUT
           else
@@ -38,8 +37,7 @@ jobs:
           fi
 
           # Check if files in the admin-api directory have changed
-
-          if git diff ${{ github.event.before }} ${{ github.sha }} | grep "^admin-api/"; then
+          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "^admin-api/"; then
             echo "admin-api-changed=true" >> $GITHUB_ENV
             echo "admin-api-changed=true" >> $GITHUB_OUTPUT
           else
@@ -48,8 +46,7 @@ jobs:
           fi
 
           # Check if files in the user-ui directory have changed
-
-          if git diff ${{ github.event.before }} ${{ github.sha }} | grep "^user-ui/"; then
+          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "^user-ui/"; then
             echo "user-ui-changed=true" >> $GITHUB_ENV
             echo "user-ui-changed=true" >> $GITHUB_OUTPUT
           else
@@ -58,14 +55,12 @@ jobs:
           fi
 
           # Check if files in the user-api directory have changed
-
-          if git diff ${{ github.event.before }} ${{ github.sha }} | grep "^user-api/"; then
+          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "^user-api/"; then
             echo "user-api-changed=true" >> $GITHUB_ENV
             echo "user-api-changed=true" >> $GITHUB_OUTPUT
           else
             echo "user-api-changed=false" >> $GITHUB_ENV
             echo "user-api-changed=false" >> $GITHUB_OUTPUT
-          fi
 
   build-and-push:
     runs-on: ubuntu-latest
@@ -119,7 +114,7 @@ jobs:
       - name: Updating the tag in Manifests for Latest Image.
         run: |
           sed -i 's|image:.*|image: '"${{ secrets.DOCKERHUB_USER }}"'/admin-ui:v'"${{github.run_number}}"'|g' k8s/admin-ui/deployment.yml
-          sed -i 's/image:.*/image: '"${{ secrets.DOCKERHUB_USER }}"'\/admin-api:v'"${{github.run_number}}"'/g' k8s/admin-api/deployment.yml
-          sed -i 's/image:.*/image: '"${{ secrets.DOCKERHUB_USER }}"'\/user-ui:v'"${{github.run_number}}"'/g' k8s/user-ui/deployment.yml
-          sed -i 's/image:.*/image: '"${{ secrets.DOCKERHUB_USER }}"'\/user-api:v'"${{github.run_number}}"'/g' k8s/user-api/deployment.yml
+          sed -i 's|image:.*|image: '"${{ secrets.DOCKERHUB_USER }}"'/admin-api:v'"${{github.run_number}}"'|g' k8s/admin-api/deployment.yml
+          sed -i 's|image:.*|image: '"${{ secrets.DOCKERHUB_USER }}"'/user-ui:v'"${{github.run_number}}"'|g' k8s/user-ui/deployment.yml
+          sed -i 's|image:.*|image: '"${{ secrets.DOCKERHUB_USER }}"'/user-api:v'"${{github.run_number}}"'|g' k8s/user-api/deployment.yml
           echo "Updated the tag in Manifests for Latest Image."
