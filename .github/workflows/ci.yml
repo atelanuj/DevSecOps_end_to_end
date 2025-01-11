@@ -30,7 +30,7 @@ jobs:
 
       - name: test
         run: | 
-          git diff --name-only "${{ github.event.before }}" "${{ github.sha }} | grep 'admin-ui/'
+          git diff --name-only "${{ github.event.before }}" "${{ github.sha }} | grep -q 'admin-ui/'
 
       - name: Check for changes
         id: check
