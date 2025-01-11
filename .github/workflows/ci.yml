@@ -30,13 +30,13 @@ jobs:
 
       - name: test
         run: | 
-          git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" 
+          git diff --name-only "${{ github.event.before }}" "${{ github.sha }} | grep "admin-ui/" 
 
       - name: Check for changes
         id: check
         run: |
           # Check if files in the admin-ui directory have changed
-          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "^admin-ui/"; then
+          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "admin-ui/"; then
             echo "admin-ui-changed=true" >> $GITHUB_ENV
             echo "admin-ui-changed=true" >> $GITHUB_OUTPUT
           else
@@ -45,7 +45,7 @@ jobs:
           fi
 
           # Check if files in the admin-api directory have changed
-          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "^admin-api/"; then
+          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "admin-api/"; then
             echo "admin-api-changed=true" >> $GITHUB_ENV
             echo "admin-api-changed=true" >> $GITHUB_OUTPUT
           else
@@ -54,7 +54,7 @@ jobs:
           fi
 
           # Check if files in the user-ui directory have changed
-          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "^user-ui/"; then
+          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "user-ui/"; then
             echo "user-ui-changed=true" >> $GITHUB_ENV
             echo "user-ui-changed=true" >> $GITHUB_OUTPUT
           else
@@ -63,7 +63,7 @@ jobs:
           fi
 
           # Check if files in the user-api directory have changed
-          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "^user-api/"; then
+          if git diff ${{ github.event.before }} ${{ github.sha }} --name-only | grep "user-api/"; then
             echo "user-api-changed=true" >> $GITHUB_ENV
             echo "user-api-changed=true" >> $GITHUB_OUTPUT
           else
