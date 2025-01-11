@@ -26,8 +26,8 @@ jobs:
 
       - name: test
         run: | 
-          echo "before=${{ github.event.before }}" >> $GITHUB_ENV
-          echo "sha=${{ github.sha }}" >> $GITHUB_ENV
+          echo "before=$(git rev-parse HEAD~1)" >> $GITHUB_ENV
+          echo "sha=$(git rev-parse HEAD )" >> $GITHUB_ENV
           echo "${{ env.before}}"
           echo "${{ env.sha}}"
           # git diff --name-only "${{ env.before }}" "${{ env.sha }}" 
