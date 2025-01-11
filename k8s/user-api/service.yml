@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-api-svc
+  namespace: user
+spec:
+  selector:
+    app: user-api
+    module: user
+  ports:
+    - protocol: TCP
+      port: 1004
+      targetPort: 1004
+  type: ClusterIP

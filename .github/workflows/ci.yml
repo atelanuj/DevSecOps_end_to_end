@@ -1,125 +1,109 @@
 ---
-name: NetFlix Clone CI
+name: CallBooking application CI
 
 on:
-  workflow_dispatch
-    # push:
-    #   branches:
-    #     - main
-
-env:
-  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-  # DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }}
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - admin-ui/Dockerfile
+      - admin-api/Dockerfile
+      - user-ui/Dockerfile
+      - user-api/Dockerfile
 
 jobs:
-    BUILD:
-        name: NetFlix Clone CI
-        runs-on: ubuntu-latest
-        steps:
-            - name: Code Checkout
-              uses: actions/checkout@v4
-              with:
-                persist-credentials: false
-                fetch-depth: 0
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      admin-ui-changed: ${{ steps.check.outputs.admin-ui-changed }}
+      admin-api-changed: ${{ steps.check.outputs.admin-api-changed }}
+      user-ui-changed: ${{ steps.check.outputs.user-ui-changed }}
+      user-api-changed: ${{ steps.check.outputs.user-api-changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Install JAVA latest
-              uses: actions/setup-java@v4
-              with:
-                distribution: 'temurin' # See 'Supported distributions' for available options
-                java-version: '21'
-                java-package: 'jdk'
-                check-latest: true
+      - name: Check for changes
+        id: check
+        run: |
+          # Check if files in the admin-ui directory have changed
+          
+          if git diff --name-only HEAD^ HEAD | grep -q "^admin-ui/"; then
+            echo "admin-ui-changed=true" >> $GITHUB_ENV
+            echo "admin-ui-changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "admin-ui-changed=false" >> $GITHUB_ENV
+            echo "admin-ui-changed=false" >> $GITHUB_OUTPUT
+          fi
 
-            # - name: SonarQube Scan
-            #   uses: SonarSource/sonarqube-scan-action@v4.2.1
-            #   env:
-            #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            #     SONAR_TOKEN: ${{env.SONAR_TOKEN}}
-            #     SONAR_HOST_URL: ${{env.SONAR_HOST_URL}}
+          # Check if files in the admin-api directory have changed
 
-            # - name: SonarQube Server Quality Gate check
-            #   id: sonarqube-quality-gate-check
-            #   uses: sonarsource/sonarqube-quality-gate-action@master
-            #   with:
-            #     pollingTimeoutSec: 600
-            #   timeout-minutes: 8
-            #   env:
-            #     SONAR_TOKEN: $SONAR_TOKEN
-            #     SONAR_HOST_URL: $SONAR_HOST_URL #OPTIONAL
+          if git diff --name-only HEAD^ HEAD | grep -q "^admin-api/"; then
+            echo "admin-api-changed=true" >> $GITHUB_ENV
+            echo "admin-api-changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "admin-api-changed=false" >> $GITHUB_ENV
+            echo "admin-api-changed=false" >> $GITHUB_OUTPUT
+          fi
 
-            # - name: "Example show SonarQube Server Quality Gate Status value"
-            #   run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+          # Check if files in the user-ui directory have changed
 
-            # - name: Run Datree k8s Manifests Policy Check
-            #   uses: datreeio/action-datree@main
-            #   with:
-            #     path: 'kubernetes/*.yml'
-            #     cliArguments: '--only-k8s-files'
+          if git diff --name-only HEAD^ HEAD | grep -q "^user-ui/"; then
+            echo "user-ui-changed=true" >> $GITHUB_ENV
+            echo "user-ui-changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "user-ui-changed=false" >> $GITHUB_ENV
+            echo "user-ui-changed=false" >> $GITHUB_OUTPUT
+          fi
 
-            
-            # - name: OWASP Dependency check
-            #   uses: dependency-check/Dependency-Check_Action@main
-            #   continue-on-error: true
-            #   id: Depcheck
-            #   env:
-            #     JAVA_HOME: /opt/jdk
-            #   with:
-            #     project: 'netflix'
-            #     path: '.'
-            #     format: 'HTML'
-            #     out: 'reports' # this is the default, no need to specify unless you wish to override it
-            #     args: >
-            #         --failOnCVSS 7
-            #         --enableRetired
+          # Check if files in the user-api directory have changed
 
-            # - name: Upload artifacts
-            #   uses: actions/upload-artifact@v4
-            #   if: ${{ always() }}
-            #   with:
-            #     name: OWASP-dependecy-report
-            #     path: './reports/dependency-check-report.html'
-        
-            # - name: Run Trivy vulnerability scanner on filesystem
-            #   uses: aquasecurity/trivy-action@0.28.0
-            #   with:
-            #     scan-type: 'fs'
-            #     ignore-unfixed: true
-            #     format: 'sarif'
-            #     output: 'trivy-results.sarif'
-            #     severity: 'CRITICAL'
+          if git diff --name-only HEAD^ HEAD | grep -q "^user-api/"; then
+            echo "user-api-changed=true" >> $GITHUB_ENV
+            echo "user-api-changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "user-api-changed=false" >> $GITHUB_ENV
+            echo "user-api-changed=false" >> $GITHUB_OUTPUT
+          fi
 
-            - name: Docker BUILD
-              run: |
-                docker build --build-arg API_KEY=${{env.TMDB_API_KEY}} -t netflix .
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            # - name: Run Trivy vulnerability scanner on Docker image
-            #   uses: aquasecurity/trivy-action@0.28.0
-            #   continue-on-error: true
-            #   with:
-            #       image-ref: 'netflix'
-            #       format: 'table'
-            #       exit-code: '1'
-            #       ignore-unfixed: true
-            #       vuln-type: 'os,library'
-            #       severity: 'CRITICAL,HIGH'
-            
-            - name: Docker TAG & PUSH
-              run: |
-                docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASS }}
-                docker tag netflix anujatel/netflix:${{github.run_number}}
-                docker push anujatel/netflix:${{github.run_number}}
-              
-            - name: Update the deployment file
-              run: | 
-                sed -i 's/anujatel\/netflix:.*/anujatel\/netflix:${{github.run_number}}/' Kubernetes/deployment.yml
-                git config --local user.email "github-actions[bot]@users.noreply.github.com"
-                git config --local user.name "github-actions[bot]"
-                git commit -a -m "Updated the Image tag to ${{github.run_number}}"
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_PASS }}
 
-            - name: Deploy to Kubernetes
-              uses: ad-m/github-push-action@master
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  branch: ${{ github.ref }}
+      - name: Build and Push Admin UI image
+        if: env.admin-ui-changed == 'true'
+        run: |
+          echo "Building and pushing Admin UI image"
+          docker build -t admin-ui ./admin-ui
+          docker tag admin-ui ${{ secrets.DOCKERHUB_USER }}/admin-ui:v${{github.run_number}}
+          docker push ${{ secrets.DOCKERHUB_USER }}/admin-ui:v${{github.run_number}}
+
+      - name: Build and Push Admin API image
+        if: env.admin-api-changed == 'true'
+        run: |
+          echo "Building and pushing Admin API image"
+          docker build -t admin-api ./admin-api
+          docker tag admin-api ${{ secrets.DOCKERHUB_USER }}/admin-api:v${{github.run_number}}
+          docker push ${{ secrets.DOCKERHUB_USER }}/admin-api:v${{github.run_number}}
+
+      - name: Build and Push User UI image
+        if: env.user-ui-changed == 'true'
+        run: |
+          echo "Building and pushing User UI image"
+          docker build -t user-ui ./user-ui
+          docker tag user-ui ${{ secrets.DOCKERHUB_USER }}/user-ui:v${{github.run_number}}
+          docker push ${{ secrets.DOCKERHUB_USER }}/user-ui:v${{github.run_number}}
+  
+      - name: Build and Push User API image
+        if: env.user-api-changed == 'true'
+        run: |
+          echo "Building and pushing User API image"
+          docker build -t user-api ./user-api
+          docker tag user-api ${{ secrets.DOCKERHUB_USER }}/user-api:v${{github.run_number}}
+          docker push ${{ secrets.DOCKERHUB_USER }}/user-api:v${{github.run_number}}

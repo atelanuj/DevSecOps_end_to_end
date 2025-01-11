@@ -57,17 +57,3 @@ spec:
             mountPath: /app/.env
             subPath: .env
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: user-ui-svc
-  namespace: user
-spec:
-  type: ClusterIP
-  selector:
-    app: user-ui
-    module: user
-  ports:
-  - port: 3000
-    targetPort: 3000
