@@ -21,7 +21,7 @@ spec:
         instance: user # Need to set this
       containers:
       - name: user-api
-        image: anujatel/user-api:latest
+        image: anujatel/user-api:v1
         ports: 
         - containerPort: 1004
           name: http
