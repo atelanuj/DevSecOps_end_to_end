@@ -10,4 +10,3 @@ USER userapi
 ENV MONGO_URL=""
 ENV ADMIN_EMAIL=""
 CMD ["npm","start"]
-#
