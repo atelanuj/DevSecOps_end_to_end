@@ -20,14 +20,14 @@ jobs:
         
         - name: Docker login
           run: |
-            docker login -u "${{ secrets.DOCKERHUB_USER }}" -p "${{ secrets.DOCKERHUB_PASS }}"
+            docker login -u "${{ vars.DOCKER_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASS }}"
 
         - name: Build and Push Admin UI image
           run: |
             echo "Building and pushing Admin UI image"
             docker build -t admin-ui ./admin-ui
-            docker tag admin-ui ${{ secrets.DOCKERHUB_USER }}/admin-ui:v${{github.run_number}}
-            docker push ${{ secrets.DOCKERHUB_USER }}/admin-ui:v${{github.run_number}}
+            docker tag admin-ui ${{ vars.DOCKER_USERNAME }}/admin-ui:v${{github.run_number}}
+            docker push ${{ vars.DOCKER_USERNAME }}/admin-ui:v${{github.run_number}}
 
     Deploy:
         runs-on: ubuntu-latest
