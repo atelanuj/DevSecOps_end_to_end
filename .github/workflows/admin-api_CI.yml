@@ -1,5 +1,5 @@
 ---
-name: CallBooking application CI
+name: CallBooking application CI admin-api
     
 on:
     workflow_dispatch:
