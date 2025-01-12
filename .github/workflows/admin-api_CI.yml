@@ -40,5 +40,14 @@ jobs:
     
             - name: Updating the tag in Manifests for Latest Image.
               run: |
-                sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/admin-api:v'"${{github.run_number}}"'|g' k8s/admin-api/deployment.yml
-                echo "Updated the tag in Manifests for ADMIN UI with Latest Image."
+                        sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/user-ui:v'"${{github.run_number}}"'|g' k8s/user-ui/deployment.yml
+                        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+                        git config --local user.name "github-actions[bot]"
+                        git commit -a -m "Updated the Image tag to ${{github.run_number}}"
+                        echo "Updated the tag in Manifests for ADMIN UI with Latest Image."
+        
+            - name: Deploy to Kubernetes
+              uses: ad-m/github-push-action@master
+              with:
+                github_token: ${{ secrets.GIT_TOKEN }}
+                branch: ${{ github.ref }}
