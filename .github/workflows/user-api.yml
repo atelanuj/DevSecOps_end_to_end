@@ -7,7 +7,7 @@ on:
         branches:
             - main
         paths:
-            - user-api/
+            - user-api/**
     
 jobs:
     build-and-push:
@@ -20,14 +20,14 @@ jobs:
         
         - name: Docker login
           run: |
-            docker login -u "${{ secrets.DOCKERHUB_USER }}" -p "${{ secrets.DOCKERHUB_PASS }}"
+            docker login -u "${{ vars.DOCKER_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASS }}"
 
         - name: Build and Push Admin UI image
           run: |
             echo "Building and pushing Admin UI image"
             docker build -t user-api ./user-api
-            docker tag user-api ${{ secrets.DOCKERHUB_USER }}/user-api:v${{github.run_number}}
-            docker push ${{ secrets.DOCKERHUB_USER }}/user-api:v${{github.run_number}}
+            docker tag user-api ${{ vars.DOCKER_USERNAME }}/user-api:v${{github.run_number}}
+            docker push ${{ vars.DOCKER_USERNAME }}/user-api:v${{github.run_number}}
 
     Deploy:
         runs-on: ubuntu-latest
@@ -35,8 +35,10 @@ jobs:
         steps:
         - name: Checkout code
           uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
 
         - name: Updating the tag in Manifests for Latest Image.
           run: |
-            sed -i 's|image:.*|image: '"${{ secrets.DOCKERHUB_USER }}"'/user-api:v'"${{github.run_number}}"'|g' k8s/user-api/deployment.yml
+            sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/user-api:v'"${{github.run_number}}"'|g' k8s/user-api/deployment.yml
             echo "Updated the tag in Manifests for ADMIN UI with Latest Image."

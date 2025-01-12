@@ -35,8 +35,10 @@ jobs:
         steps:
         - name: Checkout code
           uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
 
         - name: Updating the tag in Manifests for Latest Image.
           run: |
-            sed -i 's|image:.*|image: '"${{ secrets.DOCKERHUB_USER }}"'/admin-ui:v'"${{github.run_number}}"'|g' k8s/admin-ui/deployment.yml
+            sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/admin-ui:v'"${{github.run_number}}"'|g' k8s/admin-ui/deployment.yml
             echo "Updated the tag in Manifests for ADMIN UI with Latest Image."
