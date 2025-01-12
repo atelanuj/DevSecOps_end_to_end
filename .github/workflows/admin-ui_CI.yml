@@ -2,12 +2,12 @@
 name: CallBooking application CI admin-ui
     
 on:
-    workflow_dispatch:
-    push:
-        branches:
-            - main
-        paths:
-            - admin-ui/
+  workflow_dispatch:
+  push:
+    branches:
+        - main
+    paths:
+        - admin-ui/*
     
 jobs:
     build-and-push:
