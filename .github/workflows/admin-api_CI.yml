@@ -65,7 +65,7 @@ jobs:
               env:
                 JAVA_HOME: /opt/jdk
               with:
-                project: 'netflix'
+                project: 'Call_Booking_app'
                 path: '.'
                 format: 'HTML'
                 out: 'reports' # this is the default, no need to specify unless you wish to override it

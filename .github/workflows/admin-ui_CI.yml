@@ -1,5 +1,5 @@
 ---
-name: CallBooking application CI admin-api
+name: CallBooking application CI admin-ui
     
 on:
     workflow_dispatch:
@@ -7,7 +7,7 @@ on:
         branches:
             - main
         paths:
-            - admin-api/**
+            - admin-ui/**
 
 env:
     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -65,7 +65,7 @@ jobs:
               env:
                 JAVA_HOME: /opt/jdk
               with:
-                project: 'netflix'
+                project: 'Call_Booking_app'
                 path: '.'
                 format: 'HTML'
                 out: 'reports' # this is the default, no need to specify unless you wish to override it
@@ -102,13 +102,13 @@ jobs:
                 docker login -u "${{ vars.DOCKER_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASS }}"
 
             - name: Docker Build
-              run: docker build -t admin-api ./admin-api
+              run: docker build -t admin-ui ./admin-ui
 
             - name: Run Trivy vulnerability scanner on Docker image
               uses: aquasecurity/trivy-action@0.28.0
               continue-on-error: true
               with:
-                  image-ref: 'admin-api'
+                  image-ref: 'admin-ui'
                   format: 'table'
                   exit-code: '1'
                   ignore-unfixed: true
@@ -118,8 +118,8 @@ jobs:
             - name: Build and Push Admin UI image
               run: |
                 echo "Building and pushing Admin UI image"
-                docker tag admin-api ${{ vars.DOCKER_USERNAME }}/admin-api:v${{github.run_number}}
-                docker push ${{ vars.DOCKER_USERNAME }}/admin-api:v${{github.run_number}}
+                docker tag admin-ui ${{ vars.DOCKER_USERNAME }}/admin-ui:v${{github.run_number}}
+                docker push ${{ vars.DOCKER_USERNAME }}/admin-ui:v${{github.run_number}}
     
     Deploy:
         runs-on: ubuntu-latest
@@ -132,7 +132,7 @@ jobs:
     
             - name: Updating the tag in Manifests for Latest Image.
               run: |
-                    sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/admin-api:v'"${{github.run_number}}"'|g' k8s/admin-api/deployment.yml
+                    sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/admin-ui:v'"${{github.run_number}}"'|g' k8s/admin-ui/deployment.yml
                     git config --local user.email "github-actions[bot]@users.noreply.github.com"
                     git config --local user.name "github-actions[bot]"
                     git pull
