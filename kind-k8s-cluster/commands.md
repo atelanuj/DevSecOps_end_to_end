@@ -163,6 +163,18 @@ kubectl get svc -n monitoring
 kubectl get namespace
 ```
 
+```
+kubectl create namespace prometheus
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm repo update
+
+helm install prometheus prometheus-community/prometheus -n prometheus
+
+kubectl port-forward prometheus-server-6598cc45d8-dml7j 9090
+```
+
 - Port-forword to access the prometheus
 ```bash
 kubectl port-forward svc/kind-prometheus-kube-prome-prometheus -n monitoring 9090:9090 --address=0.0.0.0 &
