@@ -200,16 +200,20 @@ use code 12740 and datasource as prometheus
 - ArgoCD
 ```
 http://machine-ip:8081
+kubectl port-forward -n argocd service/argocd-server 8081:443 --address=0.0.0.0 &
 ```
 - Prometheus
 ```
 http://machine-ip:9090
+kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &
 ```
 - Grafana
 ```
 http://machine-ip:3000
+kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &
 ```
 - Kubernetes dashboard
 ```
 http://machine-ip:8082
+kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8082:443 --address=0.0.0.0 &
 ```
