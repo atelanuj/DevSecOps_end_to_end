@@ -36,6 +36,19 @@ kubectl version --short --client
 ```bash
 kind create cluster --config=config.yml
 ```
+`config.yml`
+```yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+
+nodes:
+- role: control-plane
+  image: kindest/node:v1.32.0
+- role: worker
+  image: kindest/node:v1.32.0
+- role: worker
+  image: kindest/node:v1.30.0
+```
 
 - Check cluster information:
 ```bash
