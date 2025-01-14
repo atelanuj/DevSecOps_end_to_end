@@ -1,2 +1,12 @@
 # DevSecOps Project
-![image](https://file.notion.so/f/f/17521e93-a4c2-4d7a-a7cb-2d4bc636c987/41b32959-ff1e-4386-8dea-d39b0cbdfb09/image.png?table=block&id=1786293b-ee72-80b0-b431-c11ef80e1d53&spaceId=17521e93-a4c2-4d7a-a7cb-2d4bc636c987&expirationTimestamp=1736985600000&signature=TfPSXABBRrI5A9QnwOAwmQ8FS2BDu_2pFTQBRbtCIJk&downloadName=image.png)
+
+## MicroService Application Architecture
+![image](https://user-images.githubusercontent.com/29688323/179655923-e5d9ed72-176e-4956-897c-c1bb434d5c63.jpg)
+
+## Pipeline Flow
+![image](https://github.com/user-attachments/assets/4c1f4ff4-fe4a-4672-b00e-a8832f44ed89)
+
+## Kubernetes Architecture
+![image](https://github.com/user-attachments/assets/17a5dc5f-98e1-4a06-9a89-2a67bdf0c94b)
+
+
