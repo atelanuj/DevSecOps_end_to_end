@@ -72,6 +72,8 @@ kubectl port-forward -n argocd service/argocd-server 8081:443 --address=0.0.0.0 
 # Password
 kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
+![image](https://github.com/user-attachments/assets/9a8d4490-7bc9-4c7b-a6a4-a81d00a703c5)
+
 
 # 3. Intall Kubernetes Dashboard
 - Create Namespace
@@ -122,6 +124,8 @@ kubectl -n kubernetes-dashboard create token admin-user
 ```
 
 >note: Use https://Machine-ip:8082 to access the dashboard
+![image](https://github.com/user-attachments/assets/a2e0acae-62ec-432c-bee7-80a27c36b9b8)
+
 
 # 4. Install HELM
 ```bash
