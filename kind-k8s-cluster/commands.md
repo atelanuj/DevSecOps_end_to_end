@@ -2,6 +2,7 @@
 
 - install Docker
 ```bash
+sudo apt update -y
 sudo apt install docker.io -y
 sudo usermod -aG docker $USER && newgrp docker
 ```
@@ -154,16 +155,6 @@ chmod +x get_helm.sh
 
 - Install Prometheus
 ```bash
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo add stable https://charts.helm.sh/stable
-helm repo update
-kubectl create namespace monitoring
-helm install kind-prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --set prometheus.service.nodePort=30000 --set prometheus.service.type=NodePort --set grafana.service.nodePort=31000 --set grafana.service.type=NodePort --set alertmanager.service.nodePort=32000 --set alertmanager.service.type=NodePort --set prometheus-node-exporter.service.nodePort=32001 --set prometheus-node-exporter.service.type=NodePort
-kubectl get svc -n monitoring
-kubectl get namespace
-```
-
-```
 kubectl create namespace prometheus
 
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -171,17 +162,32 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 
 helm install prometheus prometheus-community/prometheus -n prometheus
-
-kubectl port-forward prometheus-server-6598cc45d8-dml7j 9090
 ```
 
 - Port-forword to access the prometheus
 ```bash
-kubectl port-forward svc/kind-prometheus-kube-prome-prometheus -n monitoring 9090:9090 --address=0.0.0.0 &
-kubectl port-forward svc/kind-prometheus-grafana -n monitoring 31000:80 --address=0.0.0.0 &
+kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &
 ```
 
 # 4. Install Grafana
-```
+- Intall Grafana
+```bash
+helm repo add grafana https://grafana.github.io/helm-charts
 
+helm repo update
+
+kubectl create namespace monitoring
+
+helm install my-grafana grafana/grafana --namespace monitoring
+
+kubectl get all -n monitoring
+
+kubectl get secret --namespace monitoring my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=my-grafana" -o jsonpath="{.items[0].metadata.name}")
+
+```
+- Port-forword to access the Grafana
+```
+kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &
 ```
