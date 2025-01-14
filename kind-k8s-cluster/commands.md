@@ -191,3 +191,25 @@ export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/
 ```
 kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &
 ```
+- Add dashboard in Grafana
+```
+use code 12740 and datasource as prometheus
+```
+
+# 5. Accessing Applications
+- ArgoCD
+```
+http://machine-ip:8081
+```
+- Prometheus
+```
+http://machine-ip:9090
+```
+- Grafana
+```
+http://machine-ip:3000
+```
+- Kubernetes dashboard
+```
+http://machine-ip:8082
+```
