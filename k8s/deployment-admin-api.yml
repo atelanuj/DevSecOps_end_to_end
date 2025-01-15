@@ -33,7 +33,7 @@ spec:
           - name: MONGO_URL
             valueFrom:
               secretKeyRef:
-                name: mongo-db-secrets
+                name: admin-api-secrets
                 key: connectionstring
           - name: PORT
             value: "1004"
