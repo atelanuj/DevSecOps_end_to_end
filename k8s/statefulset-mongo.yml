@@ -14,8 +14,8 @@ spec:
       labels:
         app: mongo-db
     spec:
-      nodeSelector:
-        instance: database
+      # nodeSelector:
+      #   instance: database
       containers:
       - name: mongo-db
         image: mongo

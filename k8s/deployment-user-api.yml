@@ -17,8 +17,8 @@ spec:
         app: user-api
         module: user
     spec:
-      nodeSelector:
-        instance: user # Need to set this
+      # nodeSelector:
+      #   instance: user # Need to set this
       containers:
       - name: user-api
         image: anujatel/user-api:v2

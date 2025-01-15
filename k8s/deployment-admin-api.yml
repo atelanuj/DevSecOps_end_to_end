@@ -17,8 +17,8 @@ spec:
         app: admin-api
         module: admin
     spec:
-      nodeSelector:
-        instance: admin # Need to set this
+      # nodeSelector:
+      #   instance: admin # Need to set this
       containers:
       - name: admin-api
         image: anujatel/admin-api:v3

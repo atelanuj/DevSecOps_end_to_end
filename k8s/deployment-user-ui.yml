@@ -21,8 +21,8 @@ spec:
         - name: user-ui-vl
           configMap:
             name: user-ui-cm
-      nodeSelector:
-        instance: user # Need to set this
+      # nodeSelector:
+      #   instance: user # Need to set this
       containers:
       - name: user-ui
         image: anujatel/user-ui:v3

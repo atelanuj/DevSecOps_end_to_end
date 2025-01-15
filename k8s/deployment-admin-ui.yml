@@ -21,8 +21,8 @@ spec:
         - name: admin-ui-vl
           configMap:
             name: admin-ui-cm
-      nodeSelector:
-        instance: admin # Need to set this
+      # nodeSelector:
+      #   instance: admin # Need to set this
       containers:
       - name: admin-ui
         image: anujatel/admin-ui:v4
