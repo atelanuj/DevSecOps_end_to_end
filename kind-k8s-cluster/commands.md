@@ -168,6 +168,8 @@ helm install prometheus prometheus-community/prometheus -n prometheus
 ```bash
 kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &
 ```
+![image](https://github.com/user-attachments/assets/96b9a79e-9b1d-4118-a59c-07de1dfc5b1b)
+
 
 # 4. Install Grafana
 - Intall Grafana
@@ -195,6 +197,8 @@ kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address
 ```
 use code 12740 and datasource as prometheus
 ```
+![image](https://github.com/user-attachments/assets/20e16651-789f-4bcf-884c-b35068a5ae11)
+
 
 # 5. Accessing Applications
 - ArgoCD
