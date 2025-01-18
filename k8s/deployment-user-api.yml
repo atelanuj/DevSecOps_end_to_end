@@ -37,23 +37,23 @@ spec:
                 key: connectionstring
           - name: PORT
             value: "1004"
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "250m"
-          limits: 
-            memory: "2Gi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /api/health
-            port: 1004
-          initialDelaySeconds: 90
-          timeoutSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /api/health
-            port: 1004
-          initialDelaySeconds: 30
-          timeoutSeconds: 10
+        # resources:
+        #   requests:
+        #     memory: "1Gi"
+        #     cpu: "250m"
+        #   limits: 
+        #     memory: "2Gi"
+        #     cpu: "500m"
+        # livenessProbe:
+        #   httpGet:
+        #     path: /api/health
+        #     port: 1004
+        #   initialDelaySeconds: 90
+        #   timeoutSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /api/health
+        #     port: 1004
+        #   initialDelaySeconds: 30
+        #   timeoutSeconds: 10
 
