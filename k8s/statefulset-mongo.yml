@@ -33,26 +33,26 @@ spec:
               secretKeyRef:
                 name: mongo-db-secrets
                 key: dbpass
-        resources:
-          requests:
-            memory: "2Gi"
-            cpu: "1000m"
-          limits: 
-            memory: "3Gi"
-            cpu: "1500m"
-        readinessProbe:
-          tcpSocket:
-            port: 27017
-          initialDelaySeconds: 60
-          timeoutSeconds: 10
-          periodSeconds: 5
-        livenessProbe:
-          exec:
-            command:
-              - mongo
-              - --eval
-              - db.adminCommand('ping')
-          initialDelaySeconds: 60
-          timeoutSeconds: 10
-          periodSeconds: 5
+        # resources:
+        #   requests:
+        #     memory: "2Gi"
+        #     cpu: "1000m"
+        #   limits: 
+        #     memory: "3Gi"
+        #     cpu: "1500m"
+        # readinessProbe:
+        #   tcpSocket:
+        #     port: 27017
+        #   initialDelaySeconds: 60
+        #   timeoutSeconds: 10
+        #   periodSeconds: 5
+        # livenessProbe:
+        #   exec:
+        #     command:
+        #       - mongo
+        #       - --eval
+        #       - db.adminCommand('ping')
+        #   initialDelaySeconds: 60
+        #   timeoutSeconds: 10
+        #   periodSeconds: 5
 
