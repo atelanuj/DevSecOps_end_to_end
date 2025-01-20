@@ -75,7 +75,8 @@ jobs:
 
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
-              if: ${{ steps.Depcheck.outputs.result == 'success' }}
+              continue-on-error: true
+            #   if: ${{ steps.Depcheck.outputs.result == 'success' }}
               with:
                 name: OWASP-dependecy-report
                 path: './reports/dependency-check-report_votes_v${{github.run_number}}.html'
