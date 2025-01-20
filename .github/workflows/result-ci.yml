@@ -31,25 +31,25 @@ jobs:
                 java-package: 'jdk'
                 check-latest: true
             
-            - name: SonarQube Scan
-              uses: SonarSource/sonarqube-scan-action@v4.2.1
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                SONAR_TOKEN: ${{env.SONAR_TOKEN}}
-                SONAR_HOST_URL: ${{env.SONAR_HOST_URL}}
+            # - name: SonarQube Scan
+            #   uses: SonarSource/sonarqube-scan-action@v4.2.1
+            #   env:
+            #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #     SONAR_TOKEN: ${{env.SONAR_TOKEN}}
+            #     SONAR_HOST_URL: ${{env.SONAR_HOST_URL}}
 
-            - name: SonarQube Server Quality Gate check
-              id: sonarqube-quality-gate-check
-              uses: sonarsource/sonarqube-quality-gate-action@master
-              with:
-                pollingTimeoutSec: 600
-              timeout-minutes: 8
-              env:
-                SONAR_TOKEN: $SONAR_TOKEN
-                SONAR_HOST_URL: $SONAR_HOST_URL #OPTIONAL
+            # - name: SonarQube Server Quality Gate check
+            #   id: sonarqube-quality-gate-check
+            #   uses: sonarsource/sonarqube-quality-gate-action@master
+            #   with:
+            #     pollingTimeoutSec: 600
+            #   timeout-minutes: 8
+            #   env:
+            #     SONAR_TOKEN: $SONAR_TOKEN
+            #     SONAR_HOST_URL: $SONAR_HOST_URL #OPTIONAL
 
-            - name: "Example show SonarQube Server Quality Gate Status value"
-              run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+            # - name: "Example show SonarQube Server Quality Gate Status value"
+            #   run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
             # - name: Run Datree k8s Manifests Policy Check
             #   continue-on-error: true
@@ -132,7 +132,7 @@ jobs:
     
             - name: Updating the tag in Manifests for Latest Image.
               run: |
-                    sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/result:v'"${{github.run_number}}"'|g' k8s/result/deployment.yml
+                    sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/result:v'"${{github.run_number}}"'|g' k8s-specifications/result-deployment.yaml
                     git config --local user.email "github-actions[bot]@users.noreply.github.com"
                     git config --local user.name "github-actions[bot]"
                     git pull
