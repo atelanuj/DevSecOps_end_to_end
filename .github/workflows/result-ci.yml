@@ -1,5 +1,5 @@
 ---
-    name: CallBooking application CI admin-api
+    name: Voting application CI result
         
     on:
         workflow_dispatch:
@@ -7,7 +7,7 @@
             branches:
                 - main
             paths:
-                - admin-api/**
+                - result/**
     
     env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -78,7 +78,7 @@
                   if: ${{ steps.Depcheck.outputs.result == 'success' }}
                   with:
                     name: OWASP-dependecy-report
-                    path: './reports/dependency-check-report_admin_api_v${{github.run_number}}.html'
+                    path: './reports/dependency-check-report_results_v${{github.run_number}}.html'
             
                 - name: Run Trivy vulnerability scanner on filesystem
                   uses: aquasecurity/trivy-action@0.28.0
@@ -102,13 +102,13 @@
                     docker login -u "${{ vars.DOCKER_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASS }}"
     
                 - name: Docker Build
-                  run: docker build -t admin-api ./admin-api
+                  run: docker build -t result ./result
     
                 - name: Run Trivy vulnerability scanner on Docker image
                   uses: aquasecurity/trivy-action@0.28.0
                   continue-on-error: true
                   with:
-                      image-ref: 'admin-api'
+                      image-ref: 'result'
                       format: 'table'
                       exit-code: '1'
                       ignore-unfixed: true
@@ -118,8 +118,8 @@
                 - name: Build and Push Admin UI image
                   run: |
                     echo "Building and pushing Admin UI image"
-                    docker tag admin-api ${{ vars.DOCKER_USERNAME }}/admin-api:v${{github.run_number}}
-                    docker push ${{ vars.DOCKER_USERNAME }}/admin-api:v${{github.run_number}}
+                    docker tag result ${{ vars.DOCKER_USERNAME }}/result:v${{github.run_number}}
+                    docker push ${{ vars.DOCKER_USERNAME }}/result:v${{github.run_number}}
         
         Deploy:
             runs-on: ubuntu-latest
@@ -132,7 +132,7 @@
         
                 - name: Updating the tag in Manifests for Latest Image.
                   run: |
-                        sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/admin-api:v'"${{github.run_number}}"'|g' k8s/admin-api/deployment.yml
+                        sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/result:v'"${{github.run_number}}"'|g' k8s/result/deployment.yml
                         git config --local user.email "github-actions[bot]@users.noreply.github.com"
                         git config --local user.name "github-actions[bot]"
                         git pull
