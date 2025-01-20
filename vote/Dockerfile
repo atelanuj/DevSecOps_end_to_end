@@ -1,4 +1,3 @@
-#
 # Define a base stage that uses the official python runtime base image
 FROM python:3.11-slim AS base
 
