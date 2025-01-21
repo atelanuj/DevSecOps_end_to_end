@@ -4,6 +4,7 @@ metadata:
   labels:
     app: db
   name: db
+  namespace: voting_app
 spec:
   type: ClusterIP
   ports:

@@ -4,6 +4,7 @@ metadata:
   labels:
     app: vote
   name: vote
+  namespace: voting_app
 spec:
   type: NodePort
   ports:
