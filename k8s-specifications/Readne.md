@@ -7,6 +7,9 @@ kubectl port-forward -n voting-app service/result 5001:5001 --address=0.0.0.0 &
 # Github Actions CI
 ![image](https://github.com/user-attachments/assets/3e4633ad-c90e-49c8-ab7d-dc8dd76f9164)
 ![image](https://github.com/user-attachments/assets/3f6a12bc-903f-4648-8f97-e08b9b5ac8df)
+---
+# K8s Dashboard
+![image](https://github.com/user-attachments/assets/bac8960e-fc77-4cc4-a850-910dd0783c19)
 
 
 ---
