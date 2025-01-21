@@ -16,5 +16,5 @@ spec:
         app: worker
     spec:
       containers:
-      - image: anujatel/worker:v4
+      - image: anujatel/worker:v5
         name: worker
