@@ -76,10 +76,9 @@ jobs:
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               continue-on-error: true
-              # if: ${{ steps.Depcheck.outputs.result == 'success' }}
               with:
                 name: OWASP-dependecy-report
-                path: './reports/dependency-check-report_results_v${{github.run_number}}.html'
+                path: './reports/dependency-check-report.html'
         
             - name: Run Trivy vulnerability scanner on filesystem
               uses: aquasecurity/trivy-action@0.28.0
