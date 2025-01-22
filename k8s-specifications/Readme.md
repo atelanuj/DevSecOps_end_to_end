@@ -5,7 +5,7 @@
 - A **Postgres database** backed by a Docker volume
 - A Node.js web app which shows the **results** of the voting in real time
 
-## CI/CD Flow
+## DevOps CI/CD Flow and Tools
 ![image](https://github.com/user-attachments/assets/edaf5944-e0d2-4e53-b157-af06f3e57fb0)
 - **GitHub Actions:** For continuous Integration (CI) I have used the github actions to automate the security scan and build project.
 - **OWASP:** For vulnerabilities scanning in project dependencies (e.g., libraries, frameworks, or packages) to minimize risks associated with third-party libraries and ensure a secure software supply chain.
