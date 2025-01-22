@@ -1,11 +1,17 @@
-# Voting Application Architecture
-![image](https://github.com/user-attachments/assets/f61d7249-d56c-4cbf-91a5-760114dd0452)
-
+# Microservice base voting application Deployment:
 - A **front-end web app** in Python which lets you vote between two options
 - A **Redis** which collects new votes
 - A **.NET worker** which consumes votes and stores them in…
 - A **Postgres database** backed by a Docker volume
 - A Node.js web app which shows the **results** of the voting in real time
+
+## CI/CD Flow
+![image](https://github.com/user-attachments/assets/edaf5944-e0d2-4e53-b157-af06f3e57fb0)
+
+
+## Voting Application Architecture K8s
+![image](https://github.com/user-attachments/assets/f61d7249-d56c-4cbf-91a5-760114dd0452)
+
 
 # Run Commands to access the Application
 ```
