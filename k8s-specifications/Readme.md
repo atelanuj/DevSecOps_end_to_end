@@ -1,9 +1,11 @@
-# Microservice base voting application Deployment:
-- A **front-end web app** in Python which lets you vote between two options
-- A **Redis** which collects new votes
-- A **.NET worker** which consumes votes and stores them in…
-- A **Postgres database** backed by a Docker volume
-- A Node.js web app which shows the **results** of the voting in real time
+# [Real-Time End-to-End Microservice Base Voting Application Deployment Automation:](https://github.com/atelanuj/DevSecOps_end_to_end/tree/Voting-Application)
+
+- **A three-tier based micro-service based application deatils**:
+    - A **front-end web app** in Python which lets you vote between two options
+    - A **Redis** which collects new votes
+    - A **.NET worker** which consumes votes and stores them in…
+    - A **Postgres database** backed by a Docker volume
+    - A Node.js web app which shows the **results** of the voting in real time
 
 ## DevOps CI/CD Flow and Tools
 ![image](https://github.com/user-attachments/assets/edaf5944-e0d2-4e53-b157-af06f3e57fb0)
