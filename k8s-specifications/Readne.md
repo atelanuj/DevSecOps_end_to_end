@@ -7,7 +7,17 @@
 
 ## CI/CD Flow
 ![image](https://github.com/user-attachments/assets/edaf5944-e0d2-4e53-b157-af06f3e57fb0)
-
+- **GitHub Actions:** For continuous Integration (CI) I have used the github actions to automate the security scan and build project.
+- **OWASP:** For vulnerabilities scanning in project dependencies (e.g., libraries, frameworks, or packages) to minimize risks associated with third-party libraries and ensure a secure software supply chain.
+- **Trivy:** For ensuring continuous security with Trivy helps in scanning like Scanning File Systems, Container Image Scanning and Vulnerability Scanning in Code Repositories etc.
+- **Docker:** 📦 containerized the application to ensure portability and consistency across environments.
+- **ArgoCD:** leveraged GitOps principles to automate continuous deployments directly from Git.
+- **Kubernetes (k8s):** ⚙️ deployed and managed the containers in a Kubernetes cluster by using managed Kubernetes service by AWS EKS for high availability
+- **Prometheus:** It is an open-source monitoring and alerting toolkit designed for reliability and scalability, making it well-suited for dynamic environments like Kubernetes.
+- **Grafana:** It enables users to collect, correlate, and visualize data through customizable dashboards, facilitating informed decision-making and streamlined troubleshooting.
+- **Ansible:** Infrastructure ****Automation to setup this LAB from provisioning of AWS EC2 and installing all necessary tools like ArgoCD, K8s dashboard, Prometheus and Grafana in one shot
+- **Terraform:** Helps in infrastructure provisioning using **IaC** for AWS VPC and EKS and EC2
+- **AWS:** Used AWS for EKS, EC2, IAM, VPC services.
 
 ## Voting Application Architecture K8s
 ![image](https://github.com/user-attachments/assets/f61d7249-d56c-4cbf-91a5-760114dd0452)
