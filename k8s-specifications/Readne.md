@@ -1,11 +1,11 @@
 # Application Architecture
 ![image](https://github.com/user-attachments/assets/f61d7249-d56c-4cbf-91a5-760114dd0452)
 
-- A front-end web app in Python which lets you vote between two options
-- A Redis which collects new votes
-- A .NET worker which consumes votes and stores them in…
-- A Postgres database backed by a Docker volume
-- A Node.js web app which shows the results of the voting in real time
+- A **front-end web app** in Python which lets you vote between two options
+- A **Redis** which collects new votes
+- A **.NET worker** which consumes votes and stores them in…
+- A **Postgres database** backed by a Docker volume
+- A Node.js web app which shows the **results** of the voting in real time
 
 # Run Commands to access the Application
 ```
