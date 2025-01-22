@@ -19,3 +19,8 @@ kubectl port-forward -n voting-app service/result 5001:5001 --address=0.0.0.0 &
 # Grafana
 ![image](https://github.com/user-attachments/assets/de743eea-ed16-4e03-9b28-f13194384d7e)
 
+A front-end web app in Python which lets you vote between two options
+A Redis which collects new votes
+A .NET worker which consumes votes and stores them in…
+A Postgres database backed by a Docker volume
+A Node.js web app which shows the results of the voting in real time
