@@ -1,4 +1,4 @@
-# Application Architecture
+# Voting Application Architecture
 ![image](https://github.com/user-attachments/assets/f61d7249-d56c-4cbf-91a5-760114dd0452)
 
 - A **front-end web app** in Python which lets you vote between two options
