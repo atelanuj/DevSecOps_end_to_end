@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx-example
   rules:
-  - host: "foo.bar.com" # Vaild Domain name Or IP of Host
+  - host: "ec2-52-66-6-56.ap-south-1.compute.amazonaws.com" # Vaild Domain name Or IP of Host
     http:
       paths:
       - path: /result
