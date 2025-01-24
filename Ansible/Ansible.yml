@@ -5,205 +5,249 @@
   hosts: myhost
   gather_facts: no
   tasks:
-    - name: Install collection community.network
+    #-------------------------------------------------------------------------------------------------------------------------------------------#
+    # Optional: For provisioning AWS resources like EC2 instances
+    #-------------------------------------------------------------------------------------------------------------------------------------------#
+    - name: git clone on LocalHost
+      command: git clone -b Voting-Application https://github.com/atelanuj/DevSecOps_end_to_end.git /home/ubuntu/DevSecOps_end_to_end
+      delegate_to: localhost
+
+    - name: Install collections on localhost
       community.general.ansible_galaxy_install:
-        requirements_file: requirements.yml
+        type: collection
+        requirements_file: /home/ubuntu/DevSecOps_end_to_end/Ansible/requirements.yml
+      delegate_to: localhost
 
-    - name: set user
-      set_fact:
-        ansible_user: "ubuntu"
+    # - name: install AWS CLI
+    #   shell: |
+    #     apt install unzip -y
+    #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    #     unzip awscliv2.zip
+    #     sudo ./aws/install
+    #   become: yes
+    #   delegate_to: localhost
 
-    - name: set path
-      set_fact:
-        install_path: "/home/{{ ansible_user }}/DevSecOps_end_to_end/kind-k8s-cluster"
+    - name: Create a AWS EC2 and enbale https and http
+      amazon.aws.ec2_instance:
+        name: "Kubernetes-Cluster"
+        key_name: "DevOps.pem"
+        instance_type: t2.medium
+        security_group: default
+        volumes:
+          - ebs:
+              volume_size: 15
+        network_interfaces:
+          - assign_public_ip: true
+        image_id: ami-00bb6a80f01f03502
+        # metadata_options:
+        #   http_tokens: required
+        #   http_protocol_ipv6: enabled
+        #   http_endpoint: enabled
+        region: ap-south-1
+        tags:
+          Environment: DEV
+      register: ec2_output
+      delegate_to: localhost
+        
 
-    - name: Delte Git repo
-      shell: rm -rf /home/{{ansible_user}}/DevSecOps_end_to_end
+    #-------------------------------------------------------------------------------------------------------------------------------------------#
+    # Required: Setup LAB environment
+    #-------------------------------------------------------------------------------------------------------------------------------------------#
+#     - name: set user
+#       set_fact:
+#         ansible_user: "ubuntu"
 
-    - name: update repositories
-      apt:
-        update_cache: yes
-      become: yes
+#     - name: set path
+#       set_fact:
+#         install_path: "/home/{{ ansible_user }}/DevSecOps_end_to_end/kind-k8s-cluster"
 
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
-      become: yes
+#     - name: Delte Git repo
+#       shell: rm -rf /home/{{ansible_user}}/DevSecOps_end_to_end
 
-    - name: add user to docker group
-      user:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: yes
-      become: yes
+#     - name: update repositories
+#       apt:
+#         update_cache: yes
+#       become: yes
 
-    - name: sleep 7 secounds
-      pause:
-        seconds: 7
+#     - name: Install Docker
+#       apt:
+#         name: docker.io
+#         state: present
+#       become: yes
 
-    - name: check directory
-      stat:
-        path: /home/{{ ansible_user }}/DevSecOps_end_to_end
-      register: dir_check
+#     - name: add user to docker group
+#       user:
+#         name: "{{ ansible_user }}"
+#         groups: docker
+#         append: yes
+#       become: yes
 
-    - name: git clone
-      command: git clone -b Voting-Application https://github.com/atelanuj/DevSecOps_end_to_end.git
-      when: dir_check.stat.exists == False
+#     - name: sleep 7 secounds
+#       pause:
+#         seconds: 7
 
-    - name: Install Docker Compose
-      apt:
-        name: docker-compose
-        state: present
-      become: yes
+#     - name: check directory
+#       stat:
+#         path: /home/{{ ansible_user }}/DevSecOps_end_to_end
+#       register: dir_check
 
-    - name: Install Python3
-      apt:
-        name: python3
-        state: present
-      become: yes
+#     - name: git clone
+#       command: git clone -b Voting-Application https://github.com/atelanuj/DevSecOps_end_to_end.git
+#       when: dir_check.stat.exists == False
 
-    - name: change working directory
-      shell: | 
-        cd {{ install_path }}
+#     - name: Install Docker Compose
+#       apt:
+#         name: docker-compose
+#         state: present
+#       become: yes
 
-    - name: check directory
-      stat:
-        path: "{{ install_path }}/install_kind.sh"
-      register: kind_check
+#     - name: Install Python3
+#       apt:
+#         name: python3
+#         state: present
+#       become: yes
 
-    - name: 
-      shell: ls -l {{ install_path }} 
+#     - name: change working directory
+#       shell: | 
+#         cd {{ install_path }}
 
-    - name: Install Kind
-      shell: |
-        cd {{ install_path }}
-        chmod +x install_kind.sh
-        ./install_kind.sh
-      become: yes
-      when: kind_check.stat.exists == true
+#     - name: check directory
+#       stat:
+#         path: "{{ install_path }}/install_kind.sh"
+#       register: kind_check
 
-    - name: check directory
-      stat:
-        path: "{{ install_path }}/config.yml"
-      register: config_check
+#     - name: 
+#       shell: ls -l {{ install_path }} 
 
-    - name: created kind cluster
-      shell: kind create cluster --config {{ install_path }}/config.yml
-      when: config_check.stat.exists == true
+#     - name: Install Kind
+#       shell: |
+#         cd {{ install_path }}
+#         chmod +x install_kind.sh
+#         ./install_kind.sh
+#       become: yes
+#       when: kind_check.stat.exists == true
 
-    - name: check directory
-      stat: 
-        path: "{{ install_path }}/install_kubectl.sh"
-      register: kubectl_check
+#     - name: check directory
+#       stat:
+#         path: "{{ install_path }}/config.yml"
+#       register: config_check
 
-    - name: install kubectl
-      shell: |
-        cd {{ install_path }}
-        chmod +x install_kubectl.sh
-        ./install_kubectl.sh
-      when: kubectl_check.stat.exists == true
+#     - name: created kind cluster
+#       shell: kind create cluster --config {{ install_path }}/config.yml
+#       when: config_check.stat.exists == true
 
-    - name: set alias
-      shell: alias k="kubectl"
+#     - name: check directory
+#       stat: 
+#         path: "{{ install_path }}/install_kubectl.sh"
+#       register: kubectl_check
 
-    - name: Check the cluster
-      shell: kubectl get nodes
-      register: cluster_output
+#     - name: install kubectl
+#       shell: |
+#         cd {{ install_path }}
+#         chmod +x install_kubectl.sh
+#         ./install_kubectl.sh
+#       when: kubectl_check.stat.exists == true
 
-    - debug:
-        var: cluster_output.stdout
+#     - name: set alias
+#       shell: alias k="kubectl"
 
-    - name: Install Helm
-      shell: |
-        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-        chmod +x get_helm.sh
-        ./get_helm.sh
-      register: helm_output
+#     - name: Check the cluster
+#       shell: kubectl get nodes
+#       register: cluster_output
 
-    - debug:
-        var: helm_output.stdout
+#     - debug:
+#         var: cluster_output.stdout
 
-    - name: Install ArgoCD
-      shell: |
-        kubectl create namespace argocd
-        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-        kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
-        echo "Getting Token"
-        kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
-      register: argocd_output
+#     - name: Install Helm
+#       shell: |
+#         curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+#         chmod +x get_helm.sh
+#         ./get_helm.sh
+#       register: helm_output
 
-    - debug:
-        var: argocd_output.stdout
+#     - debug:
+#         var: helm_output.stdout
 
-    - name: Created serviceaccount and Clusterrolebindings file for Kubernetes dashboard
-      copy:
-        dest: /home/{{ ansible_user }}/DevSecOps_end_to_end/kind-k8s-cluster/argocd-serviceAccount-ClusterRolebindings.yaml
-        content: |
-          apiVersion: v1
-          kind: ServiceAccount
-          metadata:
-            name: admin-user
-            namespace: kubernetes-dashboard
-          ---
-          apiVersion: rbac.authorization.k8s.io/v1
-          kind: ClusterRoleBinding
-          metadata:
-            name: admin-user
-          roleRef:
-            apiGroup: rbac.authorization.k8s.io
-            kind: ClusterRole
-            name: cluster-admin
-          subjects:
-          - kind: ServiceAccount
-            name: admin-user
-            namespace: kubernetes-dashboard 
-          << EOF
+#     - name: Install ArgoCD
+#       shell: |
+#         kubectl create namespace argocd
+#         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+#         kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
+#         echo "Getting Token"
+#         kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+#       register: argocd_output
+
+#     - debug:
+#         var: argocd_output.stdout
+
+#     - name: Created serviceaccount and Clusterrolebindings file for Kubernetes dashboard
+#       copy:
+#         dest: /home/{{ ansible_user }}/DevSecOps_end_to_end/kind-k8s-cluster/argocd-serviceAccount-ClusterRolebindings.yaml
+#         content: |
+#           apiVersion: v1
+#           kind: ServiceAccount
+#           metadata:
+#             name: admin-user
+#             namespace: kubernetes-dashboard
+#           ---
+#           apiVersion: rbac.authorization.k8s.io/v1
+#           kind: ClusterRoleBinding
+#           metadata:
+#             name: admin-user
+#           roleRef:
+#             apiGroup: rbac.authorization.k8s.io
+#             kind: ClusterRole
+#             name: cluster-admin
+#           subjects:
+#           - kind: ServiceAccount
+#             name: admin-user
+#             namespace: kubernetes-dashboard 
+#           << EOF
         
       
-    - name: intall Kubernetes dashboard
-      shell: |
-        kubectl create ns kubernetes-dashboard
-        kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
-        kubectl apply -f /home/{{ ansible_user }}/DevSecOps_end_to_end/kind-k8s-cluster/argocd-serviceAccount-ClusterRolebindings.yaml
-        kubectl patch svc kubernetes-dashboard -n kubernetes-dashboard -p '{"spec": {"type": "NodePort"}}'
-        echo "Getting Token"
-        kubectl -n kubernetes-dashboard create token admin-user
-      register: dashboard_output
+#     - name: intall Kubernetes dashboard
+#       shell: |
+#         kubectl create ns kubernetes-dashboard
+#         kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+#         kubectl apply -f /home/{{ ansible_user }}/DevSecOps_end_to_end/kind-k8s-cluster/argocd-serviceAccount-ClusterRolebindings.yaml
+#         kubectl patch svc kubernetes-dashboard -n kubernetes-dashboard -p '{"spec": {"type": "NodePort"}}'
+#         echo "Getting Token"
+#         kubectl -n kubernetes-dashboard create token admin-user
+#       register: dashboard_output
 
-    - debug:
-        var: dashboard_output.stdout
+#     - debug:
+#         var: dashboard_output.stdout
 
-    - name: install prometheus
-      shell: |
-        kubectl create namespace prometheus
-        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-        helm repo update
-        helm install prometheus prometheus-community/prometheus -n prometheus
-      register: prometheus_output
+#     - name: install prometheus
+#       shell: |
+#         kubectl create namespace prometheus
+#         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+#         helm repo update
+#         helm install prometheus prometheus-community/prometheus -n prometheus
+#       register: prometheus_output
 
-    - debug:
-        var: prometheus_output.stdout
+#     - debug:
+#         var: prometheus_output.stdout
 
-    - name: install grafana
-      shell: |
-        helm repo add grafana https://grafana.github.io/helm-charts
-        helm repo update
-        kubectl create namespace monitoring
-        helm install my-grafana grafana/grafana --namespace monitoring
-        kubectl get all -n monitoring
-        kubectl get secret --namespace monitoring my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-        export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=my-grafana" -o jsonpath="{.items[0].metadata.name}")
-      register: grafana_output
+#     - name: install grafana
+#       shell: |
+#         helm repo add grafana https://grafana.github.io/helm-charts
+#         helm repo update
+#         kubectl create namespace monitoring
+#         helm install my-grafana grafana/grafana --namespace monitoring
+#         kubectl get all -n monitoring
+#         kubectl get secret --namespace monitoring my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+#         export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=my-grafana" -o jsonpath="{.items[0].metadata.name}")
+#       register: grafana_output
 
-    - debug:
-        var: grafana_output.stdout
+#     - debug:
+#         var: grafana_output.stdout
 
-    # Port forwarding can not work you need to run it manually
-    # - name: port-forward all applications
-    #   shell: |
-    #     kubectl port-forward -n argocd service/argocd-server 8081:443 --address=0.0.0.0 &
-    #     kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &
-    #     kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &
-    #     kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8082:443 --address=0.0.0.0 &
-...
+#     # Port forwarding can not work you need to run it manually
+#     # - name: port-forward all applications
+#     #   shell: |
+#     #     kubectl port-forward -n argocd service/argocd-server 8081:443 --address=0.0.0.0 &
+#     #     kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &
+#     #     kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &
+#     #     kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8082:443 --address=0.0.0.0 &
+# ...
