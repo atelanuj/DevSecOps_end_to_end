@@ -5,9 +5,6 @@
   hosts: myhost
   gather_facts: yes
   tasks:
-    - name: Delte Git repo
-      shell: rm -rf /home/ubuntu/DevSecOps_end_to_end
-      
     - name: set user
       set_fact:
         ansible_user: "ubuntu"
@@ -15,6 +12,9 @@
     - name: set path
       set_fact:
         install_path: "/home/{{ ansible_user }}/DevSecOps_end_to_end/kind-k8s-cluster"
+
+    - name: Delte Git repo
+      shell: rm -rf /home/{{ansible_user}}/DevSecOps_end_to_end
 
     - name: update repositories
       apt:
