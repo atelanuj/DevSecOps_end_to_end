@@ -3,8 +3,12 @@
 - name: Labsetup with Ansible
   # hosts: localhost # This is the host where the playbook will run
   hosts: myhost
-  gather_facts: yes
+  gather_facts: no
   tasks:
+    - name: Install collection community.network
+      community.general.ansible_galaxy_install:
+        requirements_file: requirements.yml
+
     - name: set user
       set_fact:
         ansible_user: "ubuntu"
@@ -34,6 +38,10 @@
         append: yes
       become: yes
 
+    - name: sleep 7 secounds
+      pause:
+        seconds: 7
+
     - name: check directory
       stat:
         path: /home/{{ ansible_user }}/DevSecOps_end_to_end
@@ -62,35 +70,39 @@
     - name: check directory
       stat:
         path: "{{ install_path }}/install_kind.sh"
-        register: kind_check
+      register: kind_check
+
+    - name: 
+      shell: ls -l {{ install_path }} 
 
     - name: Install Kind
       shell: |
-        chmod +x {{install_path}}/install_kind.sh
-        .{{install_path}}/install_kind.sh
+        cd {{ install_path }}
+        chmod +x install_kind.sh
+        ./install_kind.sh
       become: yes
-      when: kind_check.stat.exists == False
+      when: kind_check.stat.exists == true
 
     - name: check directory
       stat:
         path: "{{ install_path }}/config.yml"
-        register: config_check
+      register: config_check
 
     - name: created kind cluster
       shell: kind create cluster --config {{ install_path }}/config.yml
-      when: config_check.stat.exists == False
+      when: config_check.stat.exists == true
 
     - name: check directory
       stat: 
         path: "{{ install_path }}/install_kubectl.sh"
-        register: kubectl_check
+      register: kubectl_check
 
     - name: install kubectl
-      script: install_kubectl.sh
-      args:
-        executable: /bin/bash
-        chdir: "{{ install_path }}"
-      when: kubectl_check.stat.exists == False
+      shell: |
+        cd {{ install_path }}
+        chmod +x install_kubectl.sh
+        ./install_kubectl.sh
+      when: kubectl_check.stat.exists == true
 
     - name: set alias
       shell: alias k="kubectl"
@@ -117,7 +129,6 @@
         kubectl create namespace argocd
         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
         kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
-        kubectl port-forward -n argocd service/argocd-server 8081:443 --address=0.0.0.0 &
         echo "Getting Token"
         kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
       register: argocd_output
@@ -156,7 +167,6 @@
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
         kubectl apply -f /home/{{ ansible_user }}/DevSecOps_end_to_end/kind-k8s-cluster/argocd-serviceAccount-ClusterRolebindings.yaml
         kubectl patch svc kubernetes-dashboard -n kubernetes-dashboard -p '{"spec": {"type": "NodePort"}}'
-        kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8082:443 --address=0.0.0.0 &
         echo "Getting Token"
         kubectl -n kubernetes-dashboard create token admin-user
       register: dashboard_output
@@ -170,7 +180,6 @@
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm repo update
         helm install prometheus prometheus-community/prometheus -n prometheus
-        kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &
       register: prometheus_output
 
     - debug:
@@ -185,9 +194,16 @@
         kubectl get all -n monitoring
         kubectl get secret --namespace monitoring my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
         export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=my-grafana" -o jsonpath="{.items[0].metadata.name}")
-        kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &
       register: grafana_output
 
     - debug:
         var: grafana_output.stdout
+
+    # Port forwarding can not work you need to run it manually
+    # - name: port-forward all applications
+    #   shell: |
+    #     kubectl port-forward -n argocd service/argocd-server 8081:443 --address=0.0.0.0 &
+    #     kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &
+    #     kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &
+    #     kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8082:443 --address=0.0.0.0 &
 ...
