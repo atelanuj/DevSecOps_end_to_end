@@ -14,5 +14,5 @@ kind create cluster --config=config.yml
 kubectl cluster-info --context kind-kind
 kubectl get nodes
 kind get clusters
-alias k="kubectl"
+alias k="kubectl" /
 alias d="docker"
