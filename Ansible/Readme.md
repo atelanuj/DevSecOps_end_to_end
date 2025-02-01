@@ -17,5 +17,5 @@ sudo apt install ansible -y
 
 ## test the connection
 ```
-ansible all -m ping 
+ansible all -m ping
 ```
