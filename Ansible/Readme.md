@@ -1,7 +1,7 @@
 # How to connect Ansible to worker node
 
 ## Install Ansible
-```
+```bash
 sudo apt update
 sudo apt install software-properties-common
 sudo add-apt-repository --yes --update ppa:ansible/ansible
@@ -11,12 +11,12 @@ sudo apt install ansible -y
 ## Create a `hosts` file
 - path `etc/ansible/hosts`
 - add below line in it.
-```
+```bash
 [myhost]
 <Machine_public_IP> ansible_ssh_user=ubuntu ansible_private_key_file=<private ssh key path>
 ```
 
 ## test the connection
-```
+```bash
 ansible all -m ping
 ```
