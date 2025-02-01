@@ -9,6 +9,7 @@ sudo apt install ansible -y
 ```
 
 ## Create a `hosts` file
+- path `etc/ansible/hosts`
 - add below line in it.
 ```
 [myhost]
