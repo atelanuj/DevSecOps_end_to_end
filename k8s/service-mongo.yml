@@ -5,6 +5,7 @@ metadata:
   name: mongo-db-svc
   namespace: database
 spec:
+  clusterIP: None
   selector:
     app: mongo-db
   ports:
