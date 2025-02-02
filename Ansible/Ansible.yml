@@ -1,4 +1,35 @@
 ---
+# This Ansible playbook sets up a lab environment for DevSecOps learning.
+# It includes optional tasks for provisioning AWS resources and required tasks for setting up a local Kubernetes cluster using Kind.
+# The playbook performs the following main actions:
+# 
+# Optional AWS Provisioning:
+# - Clones a Git repository on localhost.
+# - Installs Ansible collections on localhost.
+# - Installs AWS CLI on localhost.
+# - Creates an AWS EC2 instance with specified configurations.
+# 
+# Required Lab Setup:
+# - Sets the user and installation path.
+# - Deletes any existing Git repository at the specified path.
+# - Updates the package repositories.
+# - Installs Docker and Docker Compose.
+# - Adds the user to the Docker group.
+# - Clones the Git repository if it doesn't exist.
+# - Installs Python3.
+# - Changes the working directory to the installation path.
+# - Installs Kind and creates a Kubernetes cluster using a configuration file.
+# - Installs kubectl and sets an alias for it.
+# - Checks the Kubernetes cluster nodes.
+# - Installs Helm.
+# - Installs ArgoCD and configures it.
+# - Creates a service account and cluster role bindings for the Kubernetes dashboard.
+# - Installs the Kubernetes dashboard and retrieves the access token.
+# - Installs Prometheus using Helm.
+# - Installs Grafana using Helm and retrieves the admin password.
+# 
+# Note: Port forwarding for applications needs to be run manually.
+---
 # You need a Ansible server to run this playbook
 - name: Labsetup with Ansible
   # hosts: localhost # This is the host where the playbook will run
