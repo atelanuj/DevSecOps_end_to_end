@@ -13,6 +13,7 @@ env:
     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
     # DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }}
+    APP: result
         
 jobs:
     SecurityScan:
@@ -103,13 +104,13 @@ jobs:
                 docker login -u "${{ vars.DOCKER_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASS }}"
 
             - name: Docker Build
-              run: docker build -t result ./result
+              run: docker build -t ${{env.APP}} ./${{env.APP}}
 
             - name: Run Trivy vulnerability scanner on Docker image
               uses: aquasecurity/trivy-action@0.28.0
               continue-on-error: true
               with:
-                  image-ref: 'result'
+                  image-ref: '${{env.APP}}'
                   format: 'table'
                   exit-code: '1'
                   ignore-unfixed: true
@@ -119,8 +120,8 @@ jobs:
             - name: Build and Push Admin UI image
               run: |
                 echo "Building and pushing Admin UI image"
-                docker tag result ${{ vars.DOCKER_USERNAME }}/result:v${{github.run_number}}
-                docker push ${{ vars.DOCKER_USERNAME }}/result:v${{github.run_number}}
+                docker tag ${{env.APP}} ${{ vars.DOCKER_USERNAME }}/${{env.APP}}:v${{github.run_number}}
+                docker push ${{ vars.DOCKER_USERNAME }}/${{env.APP}}:v${{github.run_number}}
     
     Deploy:
         runs-on: ubuntu-latest
@@ -133,7 +134,7 @@ jobs:
     
             - name: Updating the tag in Manifests for Latest Image.
               run: |
-                    sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/result:v'"${{github.run_number}}"'|g' k8s-specifications/result-deployment.yaml
+                    sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/${{env.APP}}:v'"${{github.run_number}}"'|g' k8s-specifications/${{env.APP}}-deployment.yaml
                     git config --local user.email "github-actions[bot]@users.noreply.github.com"
                     git config --local user.name "github-actions[bot]"
                     git pull
