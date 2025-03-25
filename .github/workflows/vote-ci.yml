@@ -3,11 +3,11 @@ name: Voting application CI vote
         
 on:
     workflow_dispatch:
-    push:
-        branches:
-            - Voting-Application
-        paths:
-            - vote/**
+    # push:
+    #     branches:
+    #         - Voting-Application
+    #     paths:
+    #         - vote/**
 
 env:
     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
