@@ -43,7 +43,7 @@
                 fi
 
             - name: Print APP variable
-              run: echo "The APP is set to ${{set-app.outputs.APP}}"
+              run: echo "The APP is set to ${{steps.set-app.outputs.APP}}"
     
         SecurityScan:
             runs-on: ubuntu-latest
