@@ -41,6 +41,9 @@
                 else
                   echo "APP=none" >> $GITHUB_ENV
                 fi
+
+            - name: Print APP variable
+              run: echo "The APP is set to ${{ env.APP }}"
     
         SecurityScan:
             runs-on: ubuntu-latest
