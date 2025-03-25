@@ -33,17 +33,17 @@
                 
                 # Check which path has changes and set APP accordingly
                 if echo "$CHANGED_FILES" | grep -q "^vote/"; then
-                  echo "APP=vote" >> $GITHUB_ENV
+                  echo "APP=vote" >> $GITHUB_OUTPUT
                 elif echo "$CHANGED_FILES" | grep -q "^worker/"; then
-                  echo "APP=worker" >> $GITHUB_ENV
+                  echo "APP=worker" >> $GITHUB_OUTPUT
                 elif echo "$CHANGED_FILES" | grep -q "^result/"; then
-                  echo "APP=result" >> $GITHUB_ENV
+                  echo "APP=result" >> $GITHUB_OUTPUT
                 else
-                  echo "APP=none" >> $GITHUB_ENV
+                  echo "APP=none" >> $GITHUB_OUTPUT
                 fi
 
             - name: Print APP variable
-              run: echo "The APP is set to ${{ env.APP }}"
+              run: echo "The APP is set to ${{needs.set-app.outputs.APP}}"
     
         SecurityScan:
             runs-on: ubuntu-latest
