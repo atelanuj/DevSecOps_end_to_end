@@ -16,7 +16,7 @@ spec:
         app: vote
     spec:
       containers:
-      - image: anujatel/vote:v8
+      - image: anujatel/vote:v9
         name: vote
         ports:
         - containerPort: 80
