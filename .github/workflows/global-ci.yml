@@ -134,13 +134,13 @@
                     docker login -u "${{ vars.DOCKER_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASS }}"
     
                 - name: Docker Build
-                  run: docker build -t ${{env.APP}} ./${{env.APP}}
+                  run: docker build -t ${{needs.set-app.outputs.APP}} ./${{needs.set-app.outputs.APP}}
     
                 - name: Run Trivy vulnerability scanner on Docker image
                   uses: aquasecurity/trivy-action@0.28.0
                   continue-on-error: true
                   with:
-                        image-ref: '${{env.APP}}'
+                        image-ref: '${{needs.set-app.outputs.APP}}'
                         format: 'table'
                         exit-code: '1'
                         ignore-unfixed: true
@@ -150,8 +150,8 @@
                 - name: Build and Push Admin UI image
                   run: |
                     echo "Building and pushing Admin UI image"
-                    docker tag ${{env.APP}} ${{ vars.DOCKER_USERNAME }}/${{env.APP}}:v${{github.run_number}}
-                    docker push ${{ vars.DOCKER_USERNAME }}/${{env.APP}}:v${{github.run_number}}
+                    docker tag ${{needs.set-app.outputs.APP}} ${{ vars.DOCKER_USERNAME }}/${{needs.set-app.outputs.APP}}:v${{github.run_number}}
+                    docker push ${{ vars.DOCKER_USERNAME }}/${{needs.set-app.outputs.APP}}:v${{github.run_number}}
         
         Deploy:
             runs-on: ubuntu-latest
@@ -164,7 +164,7 @@
         
                 - name: Updating the tag in Manifests for Latest Image.
                   run: |
-                        sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/${{env.APP}}:v'"${{github.run_number}}"'|g' k8s-specifications/${{env.APP}}-deployment.yaml
+                        sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/${{needs.set-app.outputs.APP}}:v'"${{github.run_number}}"'|g' k8s-specifications/${{needs.set-app.outputs.APP}}-deployment.yaml
                         git config --local user.email "github-actions[bot]@users.noreply.github.com"
                         git config --local user.name "github-actions[bot]"
                         git pull
