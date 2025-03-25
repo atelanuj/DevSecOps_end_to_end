@@ -10,6 +10,7 @@
           - vote/**
           - worker/**
           - result/**
+          # add folder name in commit message to trigger the workflow
     
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

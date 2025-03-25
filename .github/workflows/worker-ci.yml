@@ -1,13 +1,13 @@
 ---
 name: Voting application CI worker
     
-# on:
-#     workflow_dispatch:
-#     push:
-#         branches:
-#             - Voting-Application
-#         paths:
-#             - worker/**
+on:
+    workflow_dispatch:
+    # push:
+    #     branches:
+    #         - Voting-Application
+    #     paths:
+    #         - worker/**
     
 env:
     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
