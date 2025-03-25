@@ -134,13 +134,13 @@
                     docker login -u "${{ vars.DOCKER_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASS }}"
     
                 - name: Docker Build
-                  run: docker build -t ${{needs.SecurityScan.outputs.APP}} ./${{needs.SecurityScan.outputs.APP}}
+                  run: docker build -t ${{needs.Setup_application.outputs.APP}} ./${{needs.Setup_application.outputs.APP}}
     
                 - name: Run Trivy vulnerability scanner on Docker image
                   uses: aquasecurity/trivy-action@0.28.0
                   continue-on-error: true
                   with:
-                        image-ref: '${{needs.SecurityScan.outputs.APP}}'
+                        image-ref: '${{needs.Setup_application.outputs.APP}}'
                         format: 'table'
                         exit-code: '1'
                         ignore-unfixed: true
@@ -150,8 +150,8 @@
                 - name: Build and Push Admin UI image
                   run: |
                     echo "Building and pushing Admin UI image"
-                    docker tag ${{needs.SecurityScan.outputs.APP}} ${{ vars.DOCKER_USERNAME }}/${{needs.SecurityScan.outputs.APP}}:v${{github.run_number}}
-                    docker push ${{ vars.DOCKER_USERNAME }}/${{needs.SecurityScan.outputs.APP}}:v${{github.run_number}}
+                    docker tag ${{needs.Setup_application.outputs.APP}} ${{ vars.DOCKER_USERNAME }}/${{needs.Setup_application.outputs.APP}}:v${{github.run_number}}
+                    docker push ${{ vars.DOCKER_USERNAME }}/${{needs.Setup_application.outputs.APP}}:v${{github.run_number}}
         
         Deploy:
             runs-on: ubuntu-latest
@@ -164,7 +164,7 @@
         
                 - name: Updating the tag in Manifests for Latest Image.
                   run: |
-                        sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/${{needs.build-and-push.outputs.APP}}:v'"${{github.run_number}}"'|g' k8s-specifications/${{needs.build-and-push.outputs.APP}}-deployment.yaml
+                        sed -i 's|image:.*|image: '"${{ vars.DOCKER_USERNAME }}"'/${{needs.Setup_application.outputs.APP}}:v'"${{github.run_number}}"'|g' k8s-specifications/${{needs.Setup_application.outputs.APP}}-deployment.yaml
                         git config --local user.email "github-actions[bot]@users.noreply.github.com"
                         git config --local user.name "github-actions[bot]"
                         git pull
