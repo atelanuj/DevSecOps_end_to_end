@@ -16,7 +16,7 @@ spec:
         app: result
     spec:
       containers:
-      - image: anujatel/result:v4
+      - image: anujatel/result:v16
         name: result
         ports:
         - containerPort: 80
