@@ -15,3 +15,8 @@ output "aws_instance_id" {
   value       = aws_instance.test-ec2.id
 
 }
+output "aws_ebs_volume_id" {
+  description = "The ID of the ebs volume."
+  value       = aws_ebs_volume.ec2_ebs_volume.id
+
+}
