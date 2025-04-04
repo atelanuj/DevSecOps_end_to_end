@@ -118,11 +118,11 @@ variable "map_public_ip_on_launch" {
 }
 variable "database_subnets_cidr_1" {
   description = "mention the CIDR block for database subnet"
-  type = string
-  default = "192.168.5.0/24"
+  type        = string
+  default     = "192.168.5.0/24"
 }
 variable "database_subnets_cidr_2" {
   description = "mention the CIDR block for database subnet"
-  type = string
-  default = "192.168.6.0/24"
+  type        = string
+  default     = "192.168.6.0/24"
 }
