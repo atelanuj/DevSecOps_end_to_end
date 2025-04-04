@@ -19,9 +19,11 @@ module "aws_vpc" {
 
 # Deploy EKS Cluster and Node Group
 module "eks_cluster" {
-  source                = "./modules/eks"
-  eksclustername        = "test_eks_cluster"
-  # subnet1               = "subnet-0eb9abe0b59e8a725"
+  source = "./modules/eks"
+
+
+  eksclustername = "test_eks_cluster"
+  vpc_id                = module.aws_vpc.vpc_id
   subnet1               = module.aws_vpc.subnet1_id
   subnet2               = module.aws_vpc.subnet2_id
   nodegroupname         = "test_eks_node_group"
@@ -30,6 +32,7 @@ module "eks_cluster" {
   numberofmaxNodes      = 3
   numberofminNodes      = 1
   max_unavailable       = 2
+
 
 }
 

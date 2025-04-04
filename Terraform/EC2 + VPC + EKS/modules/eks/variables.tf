@@ -3,6 +3,11 @@ variable "eksclustername" {
   default = "my-eks-cluster"
 }
 
+variable "vpc_id" {
+  type    = string
+  default = ""
+}
+
 variable "subnet1" {
   description = "Default Subnet 1"
   type        = string
@@ -35,6 +40,11 @@ variable "numberofmaxNodes" {
 variable "numberofminNodes" {
   type    = number
   default = 1
+}
+
+variable "max_unavailable" {
+  type    = number
+  default = 2
 }
 
 variable "NodeGroupInstanceType" {
