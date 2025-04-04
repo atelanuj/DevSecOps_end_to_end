@@ -22,6 +22,11 @@ variable "ec2_az" {
   type    = string
   default = "ap-south-1a"
 }
+variable "ec2_name" {
+  type    = string
+  default = "my_ec2_instance"
+  description = "The name of the EC2 instance."
+}
 
 
 #

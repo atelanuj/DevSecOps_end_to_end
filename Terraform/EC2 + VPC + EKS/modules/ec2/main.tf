@@ -52,7 +52,7 @@ resource "aws_instance" "test-ec2" {
   # }
   # depends_on = [aws_ebs_volume.ec2_ebs_volume]
   tags = {
-    Name = "test-ec2"
+    Name = var.ec2_name
   }
 }
 
