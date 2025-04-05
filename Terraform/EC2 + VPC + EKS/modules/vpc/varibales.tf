@@ -126,3 +126,14 @@ variable "database_subnets_cidr_2" {
   type        = string
   default     = "192.168.6.0/24"
 }
+
+variable "enable_NAT_gateway" {
+  description = "NAT Gateway in public subnet"
+  type        = bool
+  default     = null
+}
+variable "NAT_gateway_tag" {
+  description = "Tag for NAT Gateway"
+  type        = string
+  default     = "tcw_nat_gateway"
+}

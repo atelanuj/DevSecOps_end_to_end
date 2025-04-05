@@ -21,6 +21,7 @@ resource "aws_internet_gateway" "myIGW" {
   tags = {
     "Name" = var.igw_tag
   }
+  count = var.create_igw ? 1 : 0 # Only create if enabled
 }
 
 ################################################################################
@@ -87,7 +88,8 @@ resource "aws_route_table" "public_route_table" {
 resource "aws_route" "public_internet_gateway" {
   route_table_id         = aws_route_table.public_route_table.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.myIGW.id
+  gateway_id             = aws_internet_gateway.myIGW[0].id
+  count = var.create_igw ? 1 : 0 # Only create if enabled
 }
 
 ################################################################################
@@ -102,6 +104,13 @@ resource "aws_route_table" "database_route_table" {
   }
 }
 
+resource "aws_route" "nat_gateway_route" {
+  count                 = var.enable_NAT_gateway ? 1 : 0 # Only create if enabled
+  route_table_id       = aws_route_table.database_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id       = aws_nat_gateway.nat[0].id
+  depends_on = [ aws_nat_gateway.nat ]
+}
 ################################################################################
 # Route table association with subnets
 ################################################################################
@@ -164,3 +173,25 @@ resource "aws_security_group" "sg" {
     Name = "tcw_security_group"
   }
 }
+
+###############################################################################
+# Create NAT Gateway
+###############################################################################
+resource "aws_eip" "nat" {
+  domain = "vpc"
+  count = var.enable_NAT_gateway ? 1 : 0  # Only create if enabled
+  tags = {
+    Name = var.NAT_gateway_tag
+  }
+}
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat[0].id
+  subnet_id     = aws_subnet.public_subnet_1.id
+  count = var.enable_NAT_gateway ? 1 : 0 # Only create if enabled
+
+  tags = {
+    Name = var.NAT_gateway_tag
+  }
+  depends_on = [ aws_eip.nat ] 
+}
+

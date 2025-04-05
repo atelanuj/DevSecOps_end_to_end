@@ -1,8 +1,8 @@
 # Deploy EC2 Instance
 # module "ec2_instance" {
 #   source            = "./modules/ec2"
-  
-  
+
+
 #   ec2_name          = "Terraform_instance"
 #   ami_id            = "ami-0e35ddab05955cf57"
 #   sg_name           = "default_sg_ec2"
@@ -17,9 +17,11 @@
 module "aws_vpc" {
   source = "./modules/vpc"
 
-  vpc_name = "test_vpc"
-  enable_dhcp_options = true
-  enable_ipv6 = true
+  vpc_name           = "test_vpc"
+  enable_ipv6        = true
+  create_igw         = false
+  public_subnet      = 2
+  enable_NAT_gateway = false
 }
 
 # Deploy EKS Cluster and Node Group
