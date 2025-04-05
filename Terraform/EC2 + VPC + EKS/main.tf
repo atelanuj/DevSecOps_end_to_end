@@ -1,3 +1,18 @@
+# # Deploy VPC
+module "aws_vpc" {
+  source = "./modules/vpc"
+
+  vpc_name           = "test_vpc"
+  enable_ipv6        = true
+  create_igw         = false
+  public_subnet      = 2
+  enable_NAT_gateway = false
+  # number of public subnets?
+  # number if private subnets?
+  # public subnets required?
+  # private subnets required?
+}
+
 # Deploy EC2 Instance
 # module "ec2_instance" {
 #   source            = "./modules/ec2"
@@ -12,17 +27,6 @@
 #   enable_port_80    = 80
 
 # }
-
-# # Deploy VPC
-module "aws_vpc" {
-  source = "./modules/vpc"
-
-  vpc_name           = "test_vpc"
-  enable_ipv6        = true
-  create_igw         = false
-  public_subnet      = 2
-  enable_NAT_gateway = false
-}
 
 # Deploy EKS Cluster and Node Group
 # module "eks_cluster" {
