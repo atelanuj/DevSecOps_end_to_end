@@ -6,6 +6,7 @@ resource "aws_vpc" "myVPC" {
   cidr_block           = var.cidr
   enable_dns_hostnames = var.enable_dns_hostnames
   enable_dns_support   = var.enable_dns_support
+  
   tags = {
     Name = var.vpc_name
   }
@@ -137,7 +138,7 @@ resource "aws_route_table_association" "database_route_table_association_2" {
 ###############################################################################
 
 resource "aws_security_group" "sg" {
-  name        = "tcw_security_group"
+  name        = "vpc_security_group"
   description = "Allow all inbound traffic"
   vpc_id      = aws_vpc.myVPC.id
 
@@ -170,7 +171,7 @@ resource "aws_security_group" "sg" {
   ]
 
   tags = {
-    Name = "tcw_security_group"
+    Name = var.vpc_sg_name
   }
 }
 

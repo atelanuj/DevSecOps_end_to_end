@@ -27,7 +27,24 @@ variable "ec2_name" {
   default = "my_ec2_instance"
   description = "The name of the EC2 instance."
 }
-
+#
+# VPC vars
+#
+variable "subnet_id" {
+  type    = string
+  default = null
+  description = "The name of the subnet_id"
+}
+variable "vpc_id" {
+  type    = string
+  default = null
+  description = "The name of the vpc_id"
+}
+variable "vpc_sg_id" {
+  type    = string
+  default = null
+  description = "The name of the vpc_sg_id"
+}
 
 #
 # Port Seletion

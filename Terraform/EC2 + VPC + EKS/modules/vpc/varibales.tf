@@ -137,3 +137,8 @@ variable "NAT_gateway_tag" {
   type        = string
   default     = "tcw_nat_gateway"
 }
+variable "vpc_sg_name" {
+  description = "Tag for NAT Gateway"
+  type        = string
+  default     = "vpc_sg"
+}

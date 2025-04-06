@@ -9,3 +9,8 @@ output "public_subnet_1" {
 output "public_subnet_2" {
   value = aws_subnet.public_subnet_2.id
 }
+
+output "sg" {
+  description = "Security group ID for the VPC"
+  value       = aws_security_group.sg.id
+}
