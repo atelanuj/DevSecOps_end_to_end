@@ -1,4 +1,4 @@
-# # Deploy VPC
+# Deploy VPC
 # module "aws_vpc" {
 #   source = "./modules/vpc"
 
@@ -50,16 +50,34 @@
 
 
 # TEST
-module "ec2-instance" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "5.8.0"
+# module "ec2-instance" {
+#   source  = "terraform-aws-modules/ec2-instance/aws"
+#   version = "5.8.0"
   
   
-    name = "anuj-my-instance"
-    ami  = "ami-0e35ddab05955cf57" # fetch with data source
-    instance_type = "t2.micro"
-    key_name      = "DevOps"
-    availability_zone = data.aws_availability_zones.available_1.names[0]
-    associate_public_ip_address = true
-    
+#     name = "anuj-my-instance"
+#     ami  = "ami-0e35ddab05955cf57" # fetch with data source
+#     instance_type = "t2.micro"
+#     key_name      = "DevOps"
+#     availability_zone = data.aws_availability_zones.available_1.names[0]
+#     associate_public_ip_address = true
+
+# }
+
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.19.0"
+
+  name = "my-vpc"
+  cidr = "10.0.0.0/16"
+
+  azs             = [data.aws_availability_zones.available_1.names[0], data.aws_availability_zones.available_1.names[1]]
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+
+  enable_nat_gateway = true
+  tags = {
+    Terraform = "true"
+    Environment = "dev"
+  }
 }

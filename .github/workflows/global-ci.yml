@@ -64,6 +64,33 @@
               java-version: '21'
               java-package: 'jdk'
               check-latest: true
+
+          - name: SonarQube Scan
+            uses: SonarSource/sonarqube-scan-action@v4.2.1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              SONAR_TOKEN: ${{env.SONAR_TOKEN}}
+              SONAR_HOST_URL: ${{env.SONAR_HOST_URL}}
+
+          - name: SonarQube Server Quality Gate check
+            id: sonarqube-quality-gate-check
+            uses: sonarsource/sonarqube-quality-gate-action@master
+            with:
+              pollingTimeoutSec: 600
+            timeout-minutes: 8
+            env:
+              SONAR_TOKEN: $SONAR_TOKEN
+              SONAR_HOST_URL: $SONAR_HOST_URL #OPTIONAL
+
+          - name: "Example show SonarQube Server Quality Gate Status value"
+            run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+
+          - name: Run Datree k8s Manifests Policy Check
+            continue-on-error: true
+            uses: datreeio/action-datree@main
+            with:
+              path: 'k8s/**/*.yml' 
+              cliArguments: '--only-k8s-files'
     
           - name: OWASP Dependency check
             uses: dependency-check/Dependency-Check_Action@main
