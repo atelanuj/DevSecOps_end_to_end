@@ -88,12 +88,12 @@ This guide provides step-by-step instructions to install AWX using the AWX Opera
 
 Forward the AWX service port to access the UI externally for `LINUX` `shell`
 
-```sh
+```shell
 kubectl port-forward service/awx-server-service --address 0.0.0.0 30080:80 &
 ```
 Forward the AWX service port to access the UI externally for `WINDOWS` `Powershell`
 
-```sh
+```powershell
 Start-Process "kubectl" -ArgumentList "port-forward --namespace awx service/awx-server-service --address 0.0.0.0 3008
 ```
 ---
