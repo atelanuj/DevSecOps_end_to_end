@@ -101,3 +101,6 @@ Start-Process "kubectl" -ArgumentList "port-forward --namespace awx service/awx-
 **Note:**  
 Replace versions and resource names as needed for your environment.
 
+# Screen Shot
+<img width="1397" height="929" alt="image" src="https://github.com/user-attachments/assets/6915faec-253b-48f3-82a8-b93fb3f0f398" />
+<img width="1919" height="895" alt="image" src="https://github.com/user-attachments/assets/0a305f21-f9fa-4d43-a925-311c6bf2b9f9" />
