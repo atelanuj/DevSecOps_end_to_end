@@ -1,4 +1,4 @@
-# Optinal GIT command:
+# Optional GIT command:
 
 ```shell
 git pull; git add . ; git commit -m "Updated files = $(echo $(git diff-tree --no-commit-id --name-only -r HEAD))" ; git push ; echo "commit = $(git diff-tree --no-commit-id --name-only -r HEAD)"
