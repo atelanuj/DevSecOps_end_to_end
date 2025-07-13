@@ -99,7 +99,8 @@ Start-Process "kubectl" -ArgumentList "port-forward --namespace awx service/awx-
 ---
 
 **Note:**  
-Replace versions and resource names as needed for your environment.
+- Replace versions and resource names as needed for your environment.
+- Deploy [K8s dashboard](https://github.com/atelanuj/DevSecOps_end_to_end/blob/Voting-Application/kind-k8s-cluster/commands.md#6-install-kubernetes-dashboard) for better view.
 
 # Screen Shot
 <img width="1397" height="929" alt="image" src="https://github.com/user-attachments/assets/6915faec-253b-48f3-82a8-b93fb3f0f398" />
