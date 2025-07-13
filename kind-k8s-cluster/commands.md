@@ -113,6 +113,8 @@ kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.pas
 - **Username:** `admin`
 - **Password:** (output from above command)
 
+![image](https://github.com/user-attachments/assets/9a8d4490-7bc9-4c7b-a6a4-a81d00a703c5)
+
 ---
 
 ## 6. Install Kubernetes Dashboard
@@ -164,7 +166,9 @@ kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8082:4
 ```bash
 kubectl -n kubernetes-dashboard create token admin-user
 ```
-- Access: [https://<Machine-IP>:8082](https://<Machine-IP>:8082)
+- Access: [https://`<Machine-IP>`:8082](https://<Machine-IP>:8082)
+
+![image](https://github.com/user-attachments/assets/a2e0acae-62ec-432c-bee7-80a27c36b9b8)
 
 ---
 
@@ -191,8 +195,9 @@ helm install prometheus prometheus-community/prometheus -n prometheus
 ```bash
 kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &
 ```
-- Access: [http://<Machine-IP>:9090](http://<Machine-IP>:9090)
+- Access: [http://`<Machine-IP>`:9090](http://<Machine-IP>:9090)
 
+![image](https://github.com/user-attachments/assets/96b9a79e-9b1d-4118-a59c-07de1dfc5b1b)
 ---
 
 ## 9. Install Grafana
@@ -216,6 +221,7 @@ kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address
 - Use dashboard code `12740`
 - Set Prometheus as the data source
 
+![image](https://github.com/user-attachments/assets/20e16651-789f-4bcf-884c-b35068a5ae11)
 ---
 
 ## 10. Quick Access URLs
