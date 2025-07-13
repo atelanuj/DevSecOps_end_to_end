@@ -166,7 +166,7 @@ kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8082:4
 ```bash
 kubectl -n kubernetes-dashboard create token admin-user
 ```
-- Access: [https://`<Machine-IP>`:8082](https://<Machine-IP>:8082)
+- Access: [https://``<Machine-IP>``:8082](https://`<Machine-IP>`:8082)
 
 ![image](https://github.com/user-attachments/assets/a2e0acae-62ec-432c-bee7-80a27c36b9b8)
 
@@ -195,7 +195,7 @@ helm install prometheus prometheus-community/prometheus -n prometheus
 ```bash
 kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &
 ```
-- Access: [http://`<Machine-IP>`:9090](http://<Machine-IP>:9090)
+- Access: [http://``<Machine-IP>``:9090](http://`<Machine-IP>`:9090)
 
 ![image](https://github.com/user-attachments/assets/96b9a79e-9b1d-4118-a59c-07de1dfc5b1b)
 ---
@@ -215,7 +215,7 @@ kubectl get secret --namespace monitoring my-grafana -o jsonpath="{.data.admin-p
 ```bash
 kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &
 ```
-- Access: [http://<Machine-IP>:3000](http://<Machine-IP>:3000)
+- Access: [http://`<Machine-IP>`:3000](http://`<Machine-IP>`:3000)
 
 ### Add Dashboard in Grafana
 - Use dashboard code `12740`
@@ -228,16 +228,16 @@ kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address
 
 | Application           | URL                        | Port Forward Command                                                                 |
 |-----------------------|----------------------------|--------------------------------------------------------------------------------------|
-| **ArgoCD**            | http://<Machine-IP>:8081   | `kubectl port-forward -n argocd service/argocd-server 8081:443 --address=0.0.0.0 &`  |
-| **Prometheus**        | http://<Machine-IP>:9090   | `kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &` |
-| **Grafana**           | http://<Machine-IP>:3000   | `kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &` |
-| **K8s Dashboard**     | https://<Machine-IP>:8082  | `kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8082:443 --address=0.0.0.0 &` |
+| **ArgoCD**            | http://`<Machine-IP>`:8081   | `kubectl port-forward -n argocd service/argocd-server 8081:443 --address=0.0.0.0 &`  |
+| **Prometheus**        | http://`<Machine-IP>`:9090   | `kubectl port-forward service/prometheus-server -n prometheus 9090:80 --address=0.0.0.0 &` |
+| **Grafana**           | http://`<Machine-IP>`:3000   | `kubectl --namespace monitoring port-forward service/my-grafana 3000:80 --address=0.0.0.0 &` |
+| **K8s Dashboard**     | https://`<Machine-IP>`:8082  | `kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8082:443 --address=0.0.0.0 &` |
 
 ---
 
 ## Notes
 
-- Replace `<Machine-IP>` with your host's IP address.
+- Replace ``<Machine-IP>`` with your host's IP address.
 - For all port-forward commands, use `&` to run in the background.
 - For production, consider using Ingress instead of port-forwarding.
 - For Windows, use `kubectl.exe` and adjust commands as needed.
