@@ -1,3 +1,9 @@
+# Optinal GIT command:
+
+```shell
+git pull; git add . ; git commit -m "Updated files = $(echo $(git diff-tree --no-commit-id --name-only -r HEAD))" ; git push ; echo "commit = $(git diff-tree --no-commit-id --name-only -r HEAD)"
+```
+
 # 1. Creating Cluster with KinD (Kubernetes in Docker)
 
 - install Docker
