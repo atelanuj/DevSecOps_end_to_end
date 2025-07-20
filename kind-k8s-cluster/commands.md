@@ -19,9 +19,7 @@ git pull; git add . ; git commit -m "Updated files = $(echo $(git diff-tree --no
 
 ### Install Docker (Ubuntu)
 ```bash
-sudo apt update -y
-sudo apt install docker.io -y
-sudo usermod -aG docker $USER && newgrp docker
+sudo apt update -y; sudo apt install docker.io -y; sudo usermod -aG docker $USER && newgrp docker
 ```
 
 ---
@@ -35,10 +33,7 @@ sudo usermod -aG docker $USER && newgrp docker
 
 ### Manual Installation (Linux x86_64)
 ```bash
-[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
-chmod +x ./kind
-sudo cp ./kind /usr/local/bin/kind
-rm -rf kind
+[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64; chmod +x ./kind; sudo cp ./kind /usr/local/bin/kind; rm -rf kind
 ```
 
 ---
