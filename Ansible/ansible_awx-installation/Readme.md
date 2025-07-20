@@ -23,6 +23,7 @@ This guide provides step-by-step instructions to install AWX using the AWX Opera
 2. **Apply the configuration:**
 
     ```sh
+    kubectl create ns awx
     kubectl apply -k .
     ```
 
