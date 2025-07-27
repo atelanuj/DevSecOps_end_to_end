@@ -39,14 +39,10 @@ sudo apt update -y; sudo apt install docker.io -y; sudo usermod -aG docker $USER
 ---
 
 ## 3. Install kubectl
+`./install_kubectl.sh`
 
 ```bash
-./install_kubectl.sh
-# OR
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
-chmod +x ./kubectl
-sudo mv ./kubectl /usr/local/bin
-kubectl version --short --client
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl; chmod +x ./kubectl; sudo mv ./kubectl /usr/local/bin; kubectl version --short --client
 ```
 
 ---
@@ -72,9 +68,7 @@ nodes:
 
 ### Verify Cluster
 ```bash
-kubectl cluster-info --context kind-kind
-kubectl get nodes
-kind get clusters
+kubectl cluster-info --context kind-kind; kubectl get nodes; kind get clusters
 ```
 
 ---
