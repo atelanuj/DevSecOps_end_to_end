@@ -1,5 +1,8 @@
 pipeline {
 	agent any
+	options {
+        quietPeriod(30) // wait 30 seconds before starting build
+    }
 	stages {
 		stage('BUILD') {
 			steps{
