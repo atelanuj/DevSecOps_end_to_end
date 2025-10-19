@@ -1,9 +1,17 @@
+@Library("Shared") _
 pipeline {
 	agent any
 	options {
         quietPeriod(300) // wait 30 seconds before starting build
     }
 	stages {
+		stage('HELLO') {
+			steps {
+				script {
+					hello()
+				}
+			}
+		}
 		stage('BUILD') {
 			steps{
 				echo "BUILDING..."
