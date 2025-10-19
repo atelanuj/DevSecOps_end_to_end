@@ -8,7 +8,7 @@ pipeline {
 		stage('HELLO') {
 			steps {
 				script {
-					hello()
+					hello('Anuj')
 				}
 			}
 		}
