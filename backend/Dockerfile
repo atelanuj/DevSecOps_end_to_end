@@ -11,7 +11,7 @@ COPY . .
 RUN npm i
 
 # tests
-# RUN npm run test
+RUN npm run tests
 
 # Stage 2
 FROM node:21-slim
