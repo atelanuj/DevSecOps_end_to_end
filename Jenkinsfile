@@ -1,10 +1,10 @@
 pipeline {
     agent any
 
-    tools {
-        sonar "Sonar"
-        owasp "OWASP"
-    }
+    // tools {
+    //     sonar "Sonar"
+    //     owasp "OWASP"
+    // }
 
     environment {
         SONAR_HOME = tool "Sonar"
