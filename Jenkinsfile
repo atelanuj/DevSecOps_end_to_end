@@ -68,7 +68,7 @@ pipeline {
                     steps {
                         // sh "docker build -t wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG} -f ./backend/Dockerfile ."
                         script {
-                            dockerImage = docker.build("registry.hub.docker.com/anujatel/wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}")
+                            dockerImage_f = docker.build("registry.hub.docker.com/anujatel/wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}")
                         }
                     }
                 }
@@ -76,7 +76,7 @@ pipeline {
                     steps {
                         // sh "docker build -t wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG} -f ./frontend/Dockerfile ."
                         script {
-                            dockerImage = docker.build("registry.hub.docker.com/anujatel/wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}")
+                            dockerImage_b = docker.build("registry.hub.docker.com/anujatel/wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}")
                         }
                     }
                 }
@@ -89,7 +89,7 @@ pipeline {
                         script {
                             withDockerRegistry(credentialsId: 'docker') {
                                 // sh 'docker push wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}'
-                                dockerImage.push()
+                                dockerImage_b.push()
                             }
                         }                     
                     }
@@ -99,7 +99,7 @@ pipeline {
                         script {
                             withDockerRegistry(credentialsId: 'docker') {
                                 // sh 'docker push wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}'
-                                dockerImage.push()
+                                dockerImage_f.push()
                             }
                         }                    
                     }
