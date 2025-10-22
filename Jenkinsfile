@@ -68,7 +68,7 @@ pipeline {
                     steps {
                         // sh "docker build -t wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG} -f ./backend/Dockerfile ."
                         script {
-                            dockerImage_f = docker.build("registry.hub.docker.com/anujatel/wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}")
+                            dockerImage_f = docker.build("registry.hub.docker.com/anujatel/wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}", "-f ./backend/Dockerfile")
                         }
                     }
                 }
@@ -76,7 +76,7 @@ pipeline {
                     steps {
                         // sh "docker build -t wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG} -f ./frontend/Dockerfile ."
                         script {
-                            dockerImage_b = docker.build("registry.hub.docker.com/anujatel/wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}")
+                            dockerImage_b = docker.build("registry.hub.docker.com/anujatel/wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}", "-f ./frontend/Dockerfile")
                         }
                     }
                 }
