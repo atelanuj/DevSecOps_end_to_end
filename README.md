@@ -1,29 +1,416 @@
-# DevSecOps Project
+# Wanderlust - Your Ultimate Travel Blog 🌍✈️
 
-## MicroService Application Architecture
-![image](https://user-images.githubusercontent.com/29688323/179655923-e5d9ed72-176e-4956-897c-c1bb434d5c63.jpg)
+WanderLust is a simple MERN travel blog website ✈ This project helps contributors upskill in React and master Git.
 
-## Pipeline Flow
-![image](https://github.com/user-attachments/assets/4c1f4ff4-fe4a-4672-b00e-a8832f44ed89)
+![Preview Image](https://github.com/krishnaacharyaa/wanderlust/assets/116620586/17ba9da6-225f-481d-87c0-5d5a010a9538)
 
-## Project Overview
+---
 
-This project involves the following key components:
+# Wanderlust Mega Project — End to End Implementation
 
-1. **Infrastructure Setup**:
-    - **Terraform** is used to provision the AWS infrastructure, including VPC, subnets, EC2 instances, and security groups.
-    - EC2 instances host essential DevSecOps tools such as Jenkins and SonarQube.
-2. **Application Setup**:
-    - **Ansible** is used to automate the setup of Jenkins, SonarQube, and other tools on EC2 instances.
-    - Kubernetes hosts the 3-tier application, which includes frontend, backend, and database tiers.
-3. **DevSecOps CI/CD Pipeline**:
-    - Github Actions orchestrates the CI pipeline, integrating with tools like SonarQube for static code analysis and OWASP Dependency-Check for vulnerability scanning.
-    - Docker images are scanned with Trivy before being pushed to Docker Hub.
-    - ArgoCD handles the Continuous Deployment (CD) process to Kubernetes.
-4. **Monitoring and Observability**:
-    - Prometheus and Grafana provide monitoring and observability for the Kubernetes cluster and application.
+In this demo we deploy a three-tier MERN stack application on an AWS EKS cluster.
 
-## Kubernetes Architecture
-![image](https://github.com/user-attachments/assets/17a5dc5f-98e1-4a06-9a89-2a67bdf0c94b)
+### Project Deployment Flow
+<img src="https://github.com/DevMadhup/Wanderlust-Mega-Project/blob/main/Assets/DevSecOps%2BGitOps.gif" />
 
+---
 
+## Tech stack used
+- GitHub (Code)
+- Docker (Containerization)
+- Jenkins (CI)
+- OWASP (Dependency check)
+- SonarQube (Quality)
+- Trivy (Filesystem Scan)
+- ArgoCD (CD)
+- Redis (Caching)
+- AWS EKS (Kubernetes)
+- Helm (Monitoring using grafana and prometheus)
+
+### Pipeline overview
+- **CI pipeline to build and push**  
+  ![image](https://github.com/user-attachments/assets/20542d8b-0701-43ed-b2f8-82f8ed28d053)
+
+- **CD pipeline to update application version**  
+  ![image](https://github.com/user-attachments/assets/8fd13807-622e-45f7-af23-dcc1ba30ca5d)
+
+- **ArgoCD application for deployment on EKS**  
+  ![image](https://github.com/user-attachments/assets/1ea9d486-656e-40f1-804d-2651efb54cf6)
+
+---
+
+> [!Important]  
+> Use the table below to jump to installation sections.
+
+| Tech stack             | Installation |
+|------------------------|--------------|
+| Jenkins Master         | <a href="#Jenkins">Install and configure Jenkins</a> |
+| eksctl                 | <a href="#EKS">Install eksctl</a> |
+| Argocd                 | <a href="#Argo">Install and configure ArgoCD</a> |
+| Jenkins-Worker Setup   | <a href="#Jenkins-worker">Install and configure Jenkins Worker Node</a> |
+| OWASP setup            | <a href="#Owasp">Install and configure OWASP</a> |
+| SonarQube              | <a href="#Sonar">Install and configure SonarQube</a> |
+| Email Notification     | <a href="#Mail">Email notification setup</a> |
+| Monitoring             | <a href="#Monitor">Prometheus and grafana setup using helm charts</a> |
+| Clean Up               | <a href="#Clean">Clean up</a> |
+
+---
+
+## Pre-requisites
+> [!Note]  
+> This project will be implemented on North California region (us-west-1).
+
+- Create 1 Master EC2 (t2.large: 2 CPU, 8GB RAM, 29GB storage) and install Docker.
+- Open the required ports in the master's security group and attach same security group to Jenkins worker node.
+- Install & configure Docker:
+```bash
+sudo apt-get update
+sudo apt-get install docker.io -y
+sudo usermod -aG docker ubuntu && newgrp docker
+```
+
+---
+
+## Install and configure Jenkins (Master machine) <a id="Jenkins"></a>
+```bash
+sudo apt update -y
+sudo apt install fontconfig openjdk-17-jre -y
+
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt-get update -y
+sudo apt-get install jenkins -y
+```
+
+- Access Jenkins Master on the browser at port 8080 and finish setup.
+
+---
+
+## Create EKS Cluster on AWS (Master machine) <a id="EKS"></a>
+
+- Ensure an IAM user with access keys and AWS CLI configured.
+
+Install AWS CLI:
+```bash
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo apt install unzip
+unzip awscliv2.zip
+sudo ./aws/install
+aws configure
+```
+
+Install kubectl:
+```bash
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin
+kubectl version --short --client
+```
+
+Install eksctl:
+```bash
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+```
+
+Create EKS cluster (example):
+```bash
+eksctl create cluster --name=wanderlust \
+                      --region=us-east-2 \
+                      --version=1.30 \
+                      --without-nodegroup
+```
+
+Associate IAM OIDC provider:
+```bash
+eksctl utils associate-iam-oidc-provider \
+  --region us-east-2 \
+  --cluster wanderlust \
+  --approve
+```
+
+Create nodegroup:
+```bash
+eksctl create nodegroup --cluster=wanderlust \
+                       --region=us-east-2 \
+                       --name=wanderlust \
+                       --node-type=t2.large \
+                       --nodes=2 \
+                       --nodes-min=2 \
+                       --nodes-max=2 \
+                       --node-volume-size=29 \
+                       --ssh-access \
+                       --ssh-public-key=eks-nodegroup-key 
+```
+
+> [!Note]  
+> Make sure the ssh-public-key "eks-nodegroup-key" is available in your AWS account.
+
+---
+
+## Setting up Jenkins worker node <a id="Jenkins-worker"></a>
+
+- Create a Jenkins Worker EC2 (t2.large) and install Java:
+```bash
+sudo apt update -y
+sudo apt install fontconfig openjdk-17-jre -y
+```
+
+- Create an IAM role with administrator access and attach it to the Jenkins worker node.
+
+- Configure AWS CLI on the worker:
+```bash
+sudo su
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo apt install unzip
+unzip awscliv2.zip
+sudo ./aws/install
+aws configure
+```
+
+- Generate SSH keys on the master:
+```bash
+ssh-keygen
+```
+- Copy the public key contents to the worker's ~/.ssh/authorized_keys.
+
+- Add the worker as a permanent agent in Jenkins (Manage Jenkins → Nodes) using SSH credentials:
+  - name: Node
+  - type: Permanent Agent
+  - Number of executors: 2
+  - Usage: Only build jobs with label expressions matching this node
+  - Launch method: Via SSH
+  - Host: <public-ip-worker-jenkins>
+  - Credentials: SSH username with private key (Username: root)
+  - Host Key Verification Strategy: Non verifying Verification Strategy
+  - Availability: Keep this agent online as much as possible
+
+![image](https://github.com/user-attachments/assets/1a9060db-db11-40b7-86f0-47a65e8ed68b)
+![image](https://github.com/user-attachments/assets/0c8ecb74-1bc5-46f9-ad55-1e22e8092198)
+![image](https://github.com/user-attachments/assets/cab93696-a4e2-4501-b164-8287d7077eef)
+
+---
+
+## Install docker (Jenkins Worker) <a id="docker"></a>
+```bash
+sudo apt install docker.io -y
+sudo usermod -aG docker ubuntu && newgrp docker
+```
+
+---
+
+## Install and configure SonarQube (Master machine) <a id="Sonar"></a>
+```bash
+docker run -itd --name SonarQube-Server -p 9000:9000 sonarqube:lts-community
+```
+
+---
+
+## Install Trivy (Jenkins Worker) <a id="Trivy"></a>
+```bash
+sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update -y
+sudo apt-get install trivy -y
+```
+
+---
+
+## Install and Configure ArgoCD (Master Machine) <a id="Argo"></a>
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+watch kubectl get pods -n argocd
+```
+
+Install ArgoCD CLI:
+```bash
+sudo curl --silent --location -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.4.7/argocd-linux-amd64
+sudo chmod +x /usr/local/bin/argocd
+kubectl get svc -n argocd
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
+kubectl get svc -n argocd
+```
+
+- Check the port where ArgoCD server is running and expose it on the security groups of a worker node.
+![image](https://github.com/user-attachments/assets/a2932e03-ebc7-42a6-9132-82638152197f)
+
+- Access ArgoCD in browser:
+```bash
+<public-ip-worker>:<port>
+```
+![image](https://github.com/user-attachments/assets/29d9cdbd-5b7c-44b3-bb9b-1d091d042ce3)
+![image](https://github.com/user-attachments/assets/08f4e047-e21c-4241-ba68-f9b719a4a39a)
+![image](https://github.com/user-attachments/assets/1ffa85c3-9055-49b4-aab0-0947b95f0dd2)
+
+Fetch initial ArgoCD password:
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+```
+- Username: admin — update password in ArgoCD UI (User Info).
+
+---
+
+## Steps to add email notification <a id="Mail"></a>
+- Allow port 465 (SMTPS) on Jenkins Master EC2.
+- Generate an app password in Gmail (2-step verification must be ON).
+![image](https://github.com/user-attachments/assets/5ab9dc9d-dcce-4f9d-9908-01095f1253cb)
+![image](https://github.com/user-attachments/assets/701752da-7703-4685-8f06-fe1f65dd1b9c)
+![image](https://github.com/user-attachments/assets/adc8d8c0-8be4-4319-9042-4115abb5c6fc)
+
+- Add Gmail username and app password to Jenkins (Manage Jenkins → Credentials).
+![image](https://github.com/user-attachments/assets/2a42ec62-87c8-43c8-a034-7be0beb8824e)
+
+- Configure Extended E-mail Notification and E-mail Notification in Jenkins System settings.
+![image](https://github.com/user-attachments/assets/bac81e24-bb07-4659-a251-955966feded8)
+![image](https://github.com/user-attachments/assets/14e254fc-1400-457e-b3f4-046404b66950)
+![image](https://github.com/user-attachments/assets/7be70b3a-b0dc-415c-838a-b1c6fd87c182)
+![image](https://github.com/user-attachments/assets/cffb6e1d-4838-483e-97e0-6851c204ab21)
+
+---
+
+## Steps to implement the project
+
+- Install required Jenkins plugins (Manage Jenkins → Plugins → Available):
+  - OWASP
+  - SonarQube Scanner
+  - Docker
+  - Pipeline: Stage View
+
+![image](https://github.com/user-attachments/assets/da6a26d3-f742-4ea8-86b7-107b1650a7c2)
+
+- Configure OWASP and SonarQube integration:
+  - Create token in SonarQube (Administration → Security → Users → Token).
+  ![image](https://github.com/user-attachments/assets/86ad8284-5da6-4048-91fe-ac20c8e4514a)
+  ![image](https://github.com/user-attachments/assets/6bc671a5-c122-45c0-b1f0-f29999bbf751)
+  ![image](https://github.com/user-attachments/assets/e748643a-e037-4d4c-a9be-944995979c60)
+
+  - Add SonarQube credentials in Jenkins (Manage Jenkins → Credentials).
+  ![image](https://github.com/user-attachments/assets/0688e105-2170-4c3f-87a3-128c1a05a0b8)
+
+  - Configure SonarQube Scanner (Manage Jenkins → Tools).
+  ![image](https://github.com/user-attachments/assets/2fdc1e56-f78c-43d2-914a-104ec2c8ea86)
+
+- Add GitHub credentials (Personal Access Token) and Docker credentials in Jenkins credentials.
+![image](https://github.com/user-attachments/assets/4d0c1a47-621e-4c3f-87a3-128c1a05a0b8)
+![image](https://github.com/user-attachments/assets/1a8287fc-b205-4156-8342-3f660f15e8fa)
+
+- Configure Global Trusted Pipeline Libraries and System SonarQube settings.
+![image](https://github.com/user-attachments/assets/ae866185-cb2b-4e83-825b-a125ec97243a)
+![image](https://github.com/user-attachments/assets/874b2e03-49b9-4c26-9b0f-bd07ce70c0f1)
+![image](https://github.com/user-attachments/assets/1ca83b43-ce85-4970-941d-9a819ce4ecfd)
+
+- Create pipelines:
+  - Wanderlust-CI
+  - Wanderlust-CD
+![image](https://github.com/user-attachments/assets/55c7b611-3c20-445f-a49c-7d779894e232)
+![image](https://github.com/user-attachments/assets/23f84a93-901b-45e3-b4e8-a12cbed13986)
+
+- Update instance-id in Automations/updatefrontendnew.sh and updatebackendnew.sh with the k8s worker's instance id in the repo.
+![image](https://github.com/user-attachments/assets/3cb044b4-df88-4d68-bf7c-775cf78d5bf2)
+
+- Provide permission to docker socket on Jenkins Worker:
+```bash
+chmod 777 /var/run/docker.sock
+```
+![image](https://github.com/user-attachments/assets/e231c62a-7adb-4335-b67e-480758713dbf)
+
+- Add EKS cluster to ArgoCD from Master machine.
+
+Login to ArgoCD CLI and add cluster:
+```bash
+argocd login 52.53.156.187:32738 --username admin
+argocd cluster list
+kubectl config get-contexts
+argocd cluster add Wanderlust@wanderlust.us-west-1.eksctl.io --name wanderlust-eks-cluster
+```
+![image](https://github.com/user-attachments/assets/7d05e5ca-1a16-4054-a321-b99270ca0bf9)
+![image](https://github.com/user-attachments/assets/76fe7a45-e05c-422d-9652-bdaee02d630f)
+![image](https://github.com/user-attachments/assets/4cab99aa-cef3-45f6-9150-05004c2f09f8)
+![image](https://github.com/user-attachments/assets/0f36aafd-bab9-4ef8-ba5d-3eb56d850604)
+![image](https://github.com/user-attachments/assets/4490b632-19fd-4499-a341-fabf8488d13c)
+
+- Connect repository in ArgoCD (Settings → Repositories → Connect repo) and create a new Application (enable Auto-Create Namespace).
+![image](https://github.com/user-attachments/assets/cc8728e5-546b-4c46-bd4c-538f4cd6a63d)
+![image](https://github.com/user-attachments/assets/eb3646e2-db84-4439-a11a-d4168080d9cc)
+![image](https://github.com/user-attachments/assets/a07f8703-5ef3-4524-aaa7-39a139335eb7)
+![image](https://github.com/user-attachments/assets/ec2d7a51-d78f-4947-a90b-258944ad59a2)
+![image](https://github.com/user-attachments/assets/55dcd3c2-5424-4efb-9bee-1c12bbf7f158)
+![image](https://github.com/user-attachments/assets/3e2468ff-8cb2-4bda-a8cc-0742cd6d0cae)
+
+- After deployment, access the application (open NodePorts and browse).
+![image](https://github.com/user-attachments/assets/bc2d9680-fe00-49f9-81bf-93c5595c20cc)
+![image](https://github.com/user-attachments/assets/1ea9d486-656e-40f1-804d-2651efb54cf6)
+
+Open ports 31000 and 31100 on worker node and access:
+```
+http://<worker-public-ip>:31000
+```
+![image](https://github.com/user-attachments/assets/a4b2a4b4-e1aa-4b22-ac6b-f40003d0723a)
+![image](https://github.com/user-attachments/assets/06f9f1c8-094d-4d9f-a9d8-256fb18a9ae4)
+![image](https://github.com/user-attachments/assets/64394f90-8610-44c0-9f63-c3a21eb78f55)
+
+Email notification example:
+![image](https://github.com/user-attachments/assets/0ab1ef47-f939-4618-8651-6aa9274721f4)
+
+---
+
+## Monitoring EKS with Prometheus & Grafana via Helm <a id="Monitor"></a>
+
+Install Helm:
+```bash
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+Add chart repos:
+```bash
+helm repo add stable https://charts.helm.sh/stable
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+```
+
+Create prometheus namespace and install:
+```bash
+kubectl create namespace prometheus
+kubectl get ns
+helm install stable prometheus-community/kube-prometheus-stack -n prometheus
+kubectl get pods -n prometheus
+kubectl get svc -n prometheus
+```
+
+Expose Prometheus and Grafana via NodePort (edit svc and change type to NodePort):
+```bash
+kubectl edit svc stable-kube-prometheus-sta-prometheus -n prometheus
+kubectl edit svc stable-grafana -n prometheus
+```
+![image](https://github.com/user-attachments/assets/90f5dc11-23de-457d-bbcb-944da350152e)
+![image](https://github.com/user-attachments/assets/ed94f40f-c1f9-4f50-a340-a68594856cc7)
+![image](https://github.com/user-attachments/assets/4a2afc1f-deba-48da-831e-49a63e1a8fb6)
+
+Get Grafana admin password:
+```bash
+kubectl get secret --namespace prometheus stable-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
+- Username: admin
+
+View Grafana dashboards:
+![image](https://github.com/user-attachments/assets/d2e7ff2f-059d-48c4-92bb-9711943819c4)
+![image](https://github.com/user-attachments/assets/3d6652d0-7795-4fe9-8919-f33eac88db73)
+![image](https://github.com/user-attachments/assets/13321ee5-5d7b-4976-b409-25d3b865a42a)
+![image](https://github.com/user-attachments/assets/75a22e4b-ae81-4cad-9c92-21dd90d126a8)
+
+---
+
+## Clean Up <a id="Clean"></a>
+Delete EKS cluster:
+```bash
+eksctl delete cluster --name=wanderlust --region=us-west-1
+```
