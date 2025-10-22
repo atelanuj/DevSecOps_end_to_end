@@ -85,19 +85,23 @@ pipeline {
         stage("Docker: Push to DockerHub"){
             parallel {
                 stage("Push Backend Image") {
-                    script {
-                        withDockerRegistry(credentialsId: 'docker') {
-                            // sh 'docker push wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}'
-                            dockerImage.push()
-                        }
+                    steps {
+                        script {
+                            withDockerRegistry(credentialsId: 'docker') {
+                                // sh 'docker push wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}'
+                                dockerImage.push()
+                            }
+                        }                     
                     }
                 }
                 stage("Push Frontend Image") {
-                    script {
-                        withDockerRegistry(credentialsId: 'docker') {
-                            // sh 'docker push wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}'
-                            dockerImage.push()
-                        }
+                    steps {
+                        script {
+                            withDockerRegistry(credentialsId: 'docker') {
+                                // sh 'docker push wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}'
+                                dockerImage.push()
+                            }
+                        }                    
                     }
                 }
             }
