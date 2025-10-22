@@ -66,6 +66,7 @@ pipeline {
             parallel {
                 stage("Backend Image Build") {
                     steps {
+                        sh 'whoami'
                         sh "docker build -t wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG} -f ./backend/Dockerfile ."
                         // script {
                         //     dockerImage_f = docker.build("registry.hub.docker.com/anujatel/wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}", "-f ./backend/Dockerfile")
@@ -74,6 +75,7 @@ pipeline {
                 }
                 stage("Frontend Image Build") {
                     steps {
+                        sh 'whoami'
                         sh "docker build -t wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG} -f ./frontend/Dockerfile ."
                         // script {
                         //     dockerImage_b = docker.build("registry.hub.docker.com/anujatel/wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}", "-f ./frontend/Dockerfile")
