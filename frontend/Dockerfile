@@ -22,9 +22,11 @@ WORKDIR /app
 # Copy built assets and dependencies from frontend-builder stage
 COPY --from=frontend-builder /app .
 
+RUN ls -la
+
 # Copy the .env.sample file to .env.local
-# COPY .env.docker .env.local
-COPY . .
+COPY .env.docker .env.local
+# COPY . .
 
 # Expose port 5173 for the Node.js application
 EXPOSE 5173
