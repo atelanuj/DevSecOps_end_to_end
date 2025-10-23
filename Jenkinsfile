@@ -91,7 +91,7 @@ pipeline {
                         script {
                             withDockerRegistry(credentialsId: 'docker') {
                                 // sh 'docker push wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}'
-                                dockerImage_b.push()
+                                dockerImage_b.push("")
                             }
                         }                     
                     }
@@ -109,9 +109,9 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            cleanWs()
-        }
-    }
+    // post {
+    //     always {
+    //         cleanWs()
+    //     }
+    // }
 }
