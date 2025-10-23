@@ -22,8 +22,6 @@ WORKDIR /app
 # Copy built assets and dependencies from frontend-builder stage
 COPY --from=frontend-builder /app .
 
-RUN ls -la
-
 # Copy the .env.sample file to .env.local
 COPY .env.docker .env.local
 # COPY . .
