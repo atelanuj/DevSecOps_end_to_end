@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    // tools {
-    //     sonar "Sonar"
-    //     owasp "OWASP"
-    // }
-
     environment {
         SONAR_HOME = tool "Sonar"
     }
@@ -55,31 +50,16 @@ pipeline {
         //         } 
         //     }
         // }
-        // stage("Docker: Login") {
-        //     steps {
-        //         withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'dockerhubpass', usernameVariable: 'dockerhubuser')]) {
-        //             sh "docker login -u ${dockerhubuser} -p ${dockerhubpass}"
-        //         }
-        //     }
-        // }
         stage("Docker: Build") {
             parallel {
                 stage("Backend Image Build") {
                     steps {
-                        sh 'whoami'
                         sh "docker build -t anujatel/wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG} -f ./backend/Dockerfile ."
-                        // script {
-                        //     dockerImage_f = docker.build("registry.hub.docker.com/anujatel/wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}", "-f ./backend/Dockerfile")
-                        // }
                     }
                 }
                 stage("Frontend Image Build") {
                     steps {
-                        sh 'whoami'
                         sh "docker build -t anujatel/wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG} -f ./frontend/Dockerfile ."
-                        // script {
-                        //     dockerImage_b = docker.build("registry.hub.docker.com/anujatel/wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}", "-f ./frontend/Dockerfile")
-                        // }
                     }
                 }
             }
@@ -90,7 +70,6 @@ pipeline {
                     steps {
                         script {
                             withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKERHUB_PASS', usernameVariable: 'DOCKERHUB_USER')]) {
-                                // sh "echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin"
                                 sh "docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}"
                                 sh "docker push anujatel/wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}"
                             }
@@ -101,7 +80,6 @@ pipeline {
                     steps {
                         script {
                             withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKERHUB_PASS', usernameVariable: 'DOCKERHUB_USER')]) {
-                                // sh "echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin"
                                 sh "docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}"
                                 sh "docker push anujatel/wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}"
                             }
@@ -114,6 +92,8 @@ pipeline {
     post {
         always {
             cleanWs()
+            sh "docker logout"
+            sh "docker system prune -af"
         }
     }
 }
