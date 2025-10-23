@@ -91,7 +91,7 @@ pipeline {
                         script {
                             withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKERHUB_PASS', usernameVariable: 'DOCKERHUB_USER')]) {
                                 // sh "echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin"
-                                sh "echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}"
+                                sh "docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}"
                                 sh "docker push wanderlust-backend-beta:${params.BACKEND_DOCKER_TAG}"
                             }
                         }                     
@@ -102,7 +102,7 @@ pipeline {
                         script {
                             withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKERHUB_PASS', usernameVariable: 'DOCKERHUB_USER')]) {
                                 // sh "echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin"
-                                sh "echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}"
+                                sh "docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASS}"
                                 sh "docker push wanderlust-frontend-beta:${params.FRONTEND_DOCKER_TAG}"
                             }
                         }                    
