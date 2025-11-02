@@ -99,6 +99,13 @@ Start-Process "kubectl" -ArgumentList "port-forward --namespace awx service/awx-
 ```
 ---
 
+## Step 6: Fetch Admin password
+
+`user = admin`
+```
+kubectl get secret awx-server-admin-password -o jsonpath="{.data.password}" | base64 --decode
+```
+
 **Note:**  
 - Replace versions and resource names as needed for your environment.
 - Deploy [K8s dashboard](https://github.com/atelanuj/DevSecOps_end_to_end/blob/Voting-Application/kind-k8s-cluster/commands.md#6-install-kubernetes-dashboard) for better view.
