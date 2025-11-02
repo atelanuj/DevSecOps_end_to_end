@@ -45,16 +45,10 @@ daemonset:
             matchers:
             - logs_path:
                 logs_path: "/var/log/containers/"
+        
         output.logstash:
           hosts: ['logstash_Nodeport_ip:5044']
 
-      # output.elasticsearch:
-      #   host: '${NODE_NAME}'
-      #   hosts: '["https://${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}"]'
-      #   username: '${ELASTICSEARCH_USERNAME}'
-      #   password: '${ELASTICSEARCH_PASSWORD}'
-      #   protocol: https
-      #   ssl.certificate_authorities: ["/usr/share/filebeat/certs/ca.crt"]
   # Only used when updateStrategy is set to "RollingUpdate"
   maxUnavailable: 1
   nodeSelector: {}
