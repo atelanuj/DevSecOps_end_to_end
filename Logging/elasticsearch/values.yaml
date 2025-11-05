@@ -21,7 +21,7 @@ roles:
   - remote_cluster_client
   - transform
 
-replicas: 3
+replicas: 1
 minimumMasterNodes: 2
 
 esMajorVersion: ""
