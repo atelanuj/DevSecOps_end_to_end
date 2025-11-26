@@ -47,4 +47,7 @@ kubectl port-forward -n voting-app service/result 5001:5001 --address=0.0.0.0 &
 # Grafana
 ![image](https://github.com/user-attachments/assets/de743eea-ed16-4e03-9b28-f13194384d7e)
 
+# SonarQube
+<img width="1892" height="909" alt="image" src="https://github.com/user-attachments/assets/695f173d-4935-44b8-867f-efb3e5145e70" />
+
 
