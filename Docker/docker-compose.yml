@@ -1,0 +1,10 @@
+version: '3'
+services:
+  ubuntu_custom:
+    # image: ubuntu_custom:v2
+    build: .
+    container_name: ubuntu_custom
+    volumes:
+      - ${PWD}:/app
+    working_dir: /app
+    command: [ "bash" ]

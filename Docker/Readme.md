@@ -15,3 +15,8 @@ winpty docker exec -it ubuntu_custom //bin/bash
 ```
 docker run -it --name ubuntu_custom -v "${PWD}:/app" -w /app ubuntu_custom:v2
 ```
+
+## Docker-compose
+```
+docker-compose up -d
+```
