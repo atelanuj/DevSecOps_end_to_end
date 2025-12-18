@@ -20,6 +20,4 @@ docker run -it --name ubuntu_custom -v "${PWD}:/app" -w /app ubuntu_custom:v2
 ```
 docker-compose run --rm ubuntu_custom
 docker-compose down --rmi all
-
-
 ```
