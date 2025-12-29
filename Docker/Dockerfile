@@ -1,26 +1,18 @@
-FROM docker:dind
+FROM ubuntu:22.04
 
 WORKDIR /app
 
-RUN apk add --no-cache \
-    bash \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     python3 \
-    python3-dev \
-    py3-pip \
-    build-base \
-    libffi-dev \
-    gfortran \
-    openblas-dev \
+    python3-pip \
     vim \
     tree \
-    git
+    git && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 
-ENV PATH="/app/venv/bin:$PATH"
-
-RUN python3 -m venv /app/venv && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 CMD ["bash"]
