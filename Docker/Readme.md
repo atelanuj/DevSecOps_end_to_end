@@ -14,7 +14,7 @@ winpty docker exec -it ubuntu_custom //bin/bash
 ## for linux
 ```
 docker run -it --name ubuntu_custom -v "${PWD}:/app" -w /app ubuntu_custom:v2
-
+docker run -it --network host --privileged=true --name dev-container -v "${PWD}:/app"  anujatel/ubuntu-dind:v2 /bin/bash
 ```
 
 ## Docker-compose for simple use
