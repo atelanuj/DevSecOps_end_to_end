@@ -8,5 +8,6 @@ services:
       - ${PWD}:/app
     working_dir: /app
     command: [ "bash" ]
+    privileged: true # to run docker commands inside the container
     stdin_open: true # interactive
     tty: true # tty
