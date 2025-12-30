@@ -13,6 +13,9 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
+# tests
+# RUN npm run test
+
 # ------------------- Stage 2: Final Stage ------------------------------
 FROM node:21-slim
 

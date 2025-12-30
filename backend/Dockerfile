@@ -10,7 +10,7 @@ COPY . .
 # packages install
 RUN npm i
 
-# # tests
+# tests
 # RUN npm run test
 
 # Stage 2
