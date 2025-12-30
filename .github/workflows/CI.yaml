@@ -21,6 +21,7 @@ env:
     BACKEND_IMAGE: ${{ vars.DOCKER_USERNAME }}/wonderlust-backend:v1
     FRONTEND_DEPLOYMENT_MANIFEST: "./kubernetes/frontend.yaml"
     BACKEND_DEPLOYMENT_MANIFEST: "./kubernetes/backend.yaml"
+    # DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }} # fetch from https://hub.datree.io/dashboard/account-token#1-get-your-account-token-from-the-dashboard
 
 jobs:
     Security-Scan:
@@ -102,6 +103,7 @@ jobs:
             
     Build-And-test:
         name: Build And Test
+        needs: Security-Scan
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -168,6 +170,7 @@ jobs:
                 
     Deploy:
         name: Deploy
+        needs: Build-And-test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
