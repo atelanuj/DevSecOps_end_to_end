@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: anujatel/wonderlust-frontend:v4
+          image: anujatel/wonderlust-frontend:v5
           ports:
             - containerPort: 5173
 ---
