@@ -115,14 +115,18 @@ jobs:
               continue-on-error: true
               run: |
                 cd ./frontend
+                echo 'Installing dependencies'
                 npm install
+                echo 'Running tests'
                 npm run test
               
             - name: Backend Unit Testing
               continue-on-error: true
               run: |
                 cd ./backend
+                echo 'Installing dependencies'
                 npm install
+                echo 'Running tests'
                 npm run test
 
             - name: Docker login
