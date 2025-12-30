@@ -69,27 +69,27 @@ jobs:
                path: ${{ env.DATREE_SCAN_PATH }}
                cliArguments: '--only-k8s-files'
     
-            - name: OWASP Dependency check
-              uses: dependency-check/Dependency-Check_Action@main
-              continue-on-error: true
-              id: Depcheck
-              env:
-                JAVA_HOME: /opt/jdk
-              with:
-                project: 'Wonder-Lust Travel App'
-                path: '.'
-                format: 'HTML'
-                out: 'reports'
-                args: >
-                  --failOnCVSS 7
-                  --enableRetired
+            # - name: OWASP Dependency check
+            #   uses: dependency-check/Dependency-Check_Action@main
+            #   continue-on-error: true
+            #   id: Depcheck
+            #   env:
+            #     JAVA_HOME: /opt/jdk
+            #   with:
+            #     project: 'Wonder-Lust Travel App'
+            #     path: '.'
+            #     format: 'HTML'
+            #     out: 'reports'
+            #     args: >
+            #       --failOnCVSS 7
+            #       --enableRetired
         
-            - name: Upload artifacts
-              uses: actions/upload-artifact@v4
-              continue-on-error: true
-              with:
-                name: OWASP-dependency-report
-                path: ${{ env.OWASP_REPORT_PATH }}
+            # - name: Upload artifacts
+            #   uses: actions/upload-artifact@v4
+            #   continue-on-error: true
+            #   with:
+            #     name: OWASP-dependency-report
+            #     path: ${{ env.OWASP_REPORT_PATH }}
         
             - name: Run Trivy vulnerability scanner on filesystem
               uses: aquasecurity/trivy-action@0.28.0
@@ -128,6 +128,28 @@ jobs:
                 npm install
                 echo 'Running tests'
                 npm run test
+
+            - name: OWASP Dependency check
+              uses: dependency-check/Dependency-Check_Action@main
+              continue-on-error: true
+              id: Depcheck
+              env:
+                JAVA_HOME: /opt/jdk
+              with:
+                project: 'Wonder-Lust Travel App'
+                path: '.'
+                format: 'HTML'
+                out: 'reports'
+                args: >
+                  --failOnCVSS 7
+                  --enableRetired
+        
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v4
+              continue-on-error: true
+              with:
+                name: OWASP-dependency-report
+                path: ${{ env.OWASP_REPORT_PATH }}
 
             - name: Docker login
               run: |
