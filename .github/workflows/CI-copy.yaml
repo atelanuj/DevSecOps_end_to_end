@@ -1,14 +1,14 @@
 name: Wonder-Lust Travel App DevSecOps CI/CD Pipeline
 
-on: 
-    workflow_dispatch:
-    push:
-        branches:
-            - Wonder_lust_jenkins_end_to_end
-        paths:
-            - frontend/**
-            - backend/**
-            - kubernetes/**
+# on: 
+#     workflow_dispatch:
+#     push:
+#         branches:
+#             - Wonder_lust_jenkins_end_to_end
+#         paths:
+#             - frontend/**
+#             - backend/**
+#             - kubernetes/**
 
 env:
     # Frontend_tag: ${{ github.run_number }}
@@ -62,12 +62,12 @@ jobs:
             # - name: "Example show SonarQube Server Quality Gate Status value"
             #   run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
               
-            # - name: Run Datree k8s Manifests Policy Check
-            #   continue-on-error: true
-            #   uses: datreeio/action-datree@main
-            #   with:
-            #    path: ${{ env.DATREE_SCAN_PATH }}
-            #    cliArguments: '--only-k8s-files'
+            - name: Run Datree k8s Manifests Policy Check
+              continue-on-error: true
+              uses: datreeio/action-datree@main
+              with:
+               path: ${{ env.DATREE_SCAN_PATH }}
+               cliArguments: '--only-k8s-files'
     
             # - name: OWASP Dependency check
             #   uses: dependency-check/Dependency-Check_Action@main
@@ -99,9 +99,9 @@ jobs:
                 format: 'sarif'
                 output: 'trivy-results.sarif'
                 severity: 'CRITICAL'
-
-    Frontend-build-test:
-        name: Frontend Build And Test
+       
+    Build-And-test:
+        name: Build And Test
         needs: Security-Scan
         runs-on: ubuntu-latest
         steps:
@@ -118,6 +118,37 @@ jobs:
                 npm install
                 echo 'Running tests'
                 npm run test
+              
+            - name: Backend Unit Testing
+              continue-on-error: true
+              run: |
+                cd ./backend
+                echo 'Installing dependencies'
+                npm install
+                echo 'Running tests'
+                npm run test
+
+            - name: OWASP Dependency check
+              uses: dependency-check/Dependency-Check_Action@main
+              continue-on-error: true
+              id: Depcheck
+              env:
+                JAVA_HOME: /opt/jdk
+              with:
+                project: 'Wonder-Lust Travel App'
+                path: '.'
+                format: 'HTML'
+                out: 'reports'
+                args: >
+                  --failOnCVSS 7
+                  --enableRetired
+        
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v4
+              continue-on-error: true
+              with:
+                name: OWASP-dependency-report
+                path: ${{ env.OWASP_REPORT_PATH }}
 
             - name: Docker login
               run: |
@@ -127,6 +158,11 @@ jobs:
               run: |
                 cd ./frontend
                 docker build -t ${{env.FRONTEND_IMAGE}} .
+
+            - name: Backend Docker Build
+              run: |
+                cd ./backend
+                docker build -t ${{env.BACKEND_IMAGE}} .
 
             - name: Run Trivy vulnerability scanner on Frontend Docker image
               uses: aquasecurity/trivy-action@0.28.0
@@ -139,39 +175,6 @@ jobs:
                 vuln-type: 'os,library'
                 severity: 'CRITICAL,HIGH'
 
-            - name: Frontend Docker Push
-              run: |
-                cd ./frontend
-                docker push ${{env.FRONTEND_IMAGE}}
-
-    Backend-build-test:
-        name: Backend Build And Test
-        needs: Security-Scan
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 0
-
-            - name: Backend Unit Testing
-              continue-on-error: true
-              run: |
-                cd ./backend
-                echo 'Installing dependencies'
-                npm install
-                echo 'Running tests'
-                npm run test
-
-            - name: Docker login
-              run: |
-                docker login -u "${{ vars.DOCKER_USERNAME }}" -p "${{ secrets.DOCKERHUB_PASS }}"
-
-            - name: Backend Docker Build
-              run: |
-                cd ./backend
-                docker build -t ${{env.BACKEND_IMAGE}} .
-
             - name: Run Trivy vulnerability scanner on Backend Docker image
               uses: aquasecurity/trivy-action@0.28.0
               continue-on-error: true
@@ -183,14 +186,18 @@ jobs:
                 vuln-type: 'os,library'
                 severity: 'CRITICAL,HIGH'
 
-            - name: Backend Docker Push
+            - name: Push Frontend Docker Image
               run: |
-                cd ./backend
+                docker push ${{env.FRONTEND_IMAGE}}
+
+            - name: Push Backend Docker Image
+              run: |
                 docker push ${{env.BACKEND_IMAGE}}
+
                 
     Deploy:
         name: Deploy
-        needs: [Frontend-build-test, Backend-build-test]
+        needs: Build-And-test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
