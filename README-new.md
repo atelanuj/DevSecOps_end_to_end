@@ -9,6 +9,7 @@ WanderLust is a simple MERN travel blog website ✈ This project helps contribut
 
 ### ArgoCD
 <img width="1898" height="986" alt="image" src="https://github.com/user-attachments/assets/c08a05db-97a6-4f81-b9a8-19b81422da8e" />
+<img width="1093" height="675" alt="image" src="https://github.com/user-attachments/assets/993c9812-9e4a-4f31-9df9-99db31c7f3c8" />
 
 ### Prometheus
 
