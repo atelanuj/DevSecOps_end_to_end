@@ -2,7 +2,7 @@ version: '3'
 services:
   ubuntu-dind:
     image: anujatel/ubuntu-dind:v2
-    # build: ./Docker/Dockerfile-Dind-ubuntu-mlops
+    build: ./Docker/Dockerfile-Dind-ubuntu-mlops
     container_name: ubuntu-dind
     volumes:
       - ${PWD}:/app
