@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  namespace: observability
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush        5
+        Daemon       Off
+        Log_Level    info
+        Parsers_File parsers.conf
+
+    # =========================================
+    # INPUTS
+    # =========================================
+
+    # Logs from Kubernetes containers
+    [INPUT]
+        Name        tail
+        Path        /var/log/containers/*.log
+        Tag         kube.*
+        Parser      docker
+        DB          /var/log/flb_kube.db
+        Mem_Buf_Limit 5MB
+        Skip_Long_Lines On
+
+    # Prometheus metrics
+    [INPUT]
+        Name        prometheus_scrape
+        Tag         metrics.kube
+        Listen      0.0.0.0
+        Port        9102
+
+    # OpenTelemetry input (Receives traces/logs from apps)
+    [INPUT]
+        Name        opentelemetry
+        Tag         traces.*
+        Listen      0.0.0.0
+        Port        4318
+
+    # =========================================
+    # FILTERS
+    # =========================================
+
+    # Add Kubernetes metadata to logs
+    [FILTER]
+        Name        kubernetes
+        Match       kube.*
+        Merge_Log   On
+        Keep_Log    Off
+
+    # =========================================
+    # OUTPUTS
+    # =========================================
+
+    # Centralized output: Forward EVERYTHING to OTEL Collector
+    # The OTEL Collector will then route logs to Loki and traces to Tempo
+    [OUTPUT]
+        Name        opentelemetry
+        Match       *
+        Host        otel-collector.observability.svc.cluster.local
+        Port        4317
+        tls         Off
+
+    # Expose Prometheus metrics for scraping by Prometheus server
+    [OUTPUT]
+        Name        prometheus_exporter
+        Match       metrics.*
+        Host        0.0.0.0
+        Port        9999
+
+
+  parsers.conf: |
+    [PARSER]
+        Name        docker
+        Format      json
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L

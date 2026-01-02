@@ -1,0 +1,30 @@
+apiVersion: 1
+datasources:
+  # =========================================
+  # Loki (Logs) Data Source
+  # =========================================
+  - name: Loki
+    uid: loki-ds
+    type: loki
+    access: proxy
+    url: http://loki.observability.svc.cluster.local:3100
+    isDefault: false
+    jsonData:
+      maxLines: 1000
+
+  # =========================================
+  # Tempo (Traces) Data Source
+  # =========================================
+  - name: Tempo
+    uid: tempo-ds
+    type: tempo
+    access: proxy
+    url: http://tempo-query-frontend.observability.svc.cluster.local:3100
+    jsonData:
+      # Optional: configure additional Tempo options here
+      # tracesToLogsV2:
+      #   datasourceUid: loki-ds
+      #   tags:
+      #     - { key: "namespace", value: "namespace" }
+      #     - { key: "service.name", value: "service.name" }
+    secureJsonData: {}

@@ -40,6 +40,10 @@ spec:
               value: "120000"
             - name: NODE_ENV
               value: "Development"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector.observability.svc.cluster.local:4317"
+            - name: OTEL_SERVICE_NAME
+              value: "backend"
 ---
 apiVersion: v1
 kind: Service

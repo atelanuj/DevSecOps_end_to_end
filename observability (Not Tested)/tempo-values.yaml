@@ -1,0 +1,29 @@
+tempo:
+  storage:
+    trace:
+      backend: local
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+
+server:
+  http_listen_port: 3100
+
+distributor:
+  replicas: 1
+ingester:
+  replicas: 1
+querier:
+  replicas: 1
+queryFrontend:
+  replicas: 1
+compactor:
+  replicas: 1
+
+metricsGenerator:
+  enabled: false

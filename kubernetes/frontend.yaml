@@ -24,6 +24,10 @@ spec:
           env:
             - name: VITE_API_PATH
               value: "http://localhost:31100"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector.observability.svc.cluster.local:4318"
+            - name: OTEL_SERVICE_NAME
+              value: "frontend"
 ---
 apiVersion: v1
 kind: Service
