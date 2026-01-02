@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: anujatel/wonderlust-frontend:v11
+          image: anujatel/wonderlust-frontend:v12
           ports:
             - containerPort: 5173
           env:

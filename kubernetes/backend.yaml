@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: anujatel/wonderlust-backend:v11
+          image: anujatel/wonderlust-backend:v12
           ports:
             - containerPort: 8080
           env:
