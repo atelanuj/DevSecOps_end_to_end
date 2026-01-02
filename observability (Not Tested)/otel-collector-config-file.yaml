@@ -13,15 +13,45 @@ data:
 
     processors:
       batch:
+      # Enrich data with Kubernetes metadata (needs ServiceAccount)
+      k8sattributes:
+        extract:
+          metadata:
+            - k8s.namespace.name
+            - k8s.pod.name
+            - k8s.deployment.name
+            - k8s.node.name
+        passthrough: false
+      # Detect infrastructure information
+      resourcedetection:
+        detectors: [env, system]
 
     exporters:
+      # Export traces to Tempo (pointing to the distributor)
       otlp/tempo:
-        endpoint: tempo:4317
-        insecure: true
+        endpoint: tempo-distributor.observability.svc.cluster.local:4317
+        tls:
+          insecure: true
+
+      # Export logs to Loki
+      loki:
+        endpoint: http://loki.observability.svc.cluster.local:3100/loki/api/v1/push
+
+      # Export metrics to local OTel log (useful for debugging)
+      logging:
+        loglevel: info
 
     service:
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [batch]
+          processors: [resourcedetection, k8sattributes, batch]
           exporters: [otlp/tempo]
+        logs:
+          receivers: [otlp]
+          processors: [resourcedetection, k8sattributes, batch]
+          exporters: [loki]
+        metrics:
+          receivers: [otlp]
+          processors: [resourcedetection, k8sattributes, batch]
+          exporters: [logging]
