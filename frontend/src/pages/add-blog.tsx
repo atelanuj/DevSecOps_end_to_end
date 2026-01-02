@@ -133,7 +133,7 @@ function AddBlog() {
             />
           </div>
           <h2 className="cursor-text text-lg font-semibold text-light-primary dark:text-dark-primary md:text-xl lg:text-2xl">
-            Create Blog
+            Create Blog by Anuj Atel
           </h2>
         </div>
       </div>
