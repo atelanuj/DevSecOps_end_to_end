@@ -32,7 +32,6 @@ spec:
             name: otel-collector-config
 
 ---
----
 apiVersion: v1
 kind: Service
 metadata:
