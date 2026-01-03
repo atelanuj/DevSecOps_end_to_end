@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-logger
+  labels:
+    app: test-logger
+spec:
+  restartPolicy: Never
+  containers:
+    - name: test-logger
+      image: busybox
+      command: ["/bin/sh","-c","while true; do echo \"test-log $(date)\"; sleep 2; done"]
