@@ -9,7 +9,11 @@ data:
       otlp:
         protocols:
           grpc:
+            endpoint: 0.0.0.0:4317
           http:
+            endpoint: 0.0.0.0:4318
+      fluentforward:
+        endpoint: 0.0.0.0:24224
 
     processors:
       batch:
@@ -25,21 +29,56 @@ data:
       # Detect infrastructure information
       resourcedetection:
         detectors: [env, system]
+      # Transform attributes for Loki
+      transform:
+        log_statements:
+          - context: log
+            statements:
+              # Set essential labels in LogRecord attributes (for Loki promotion)
+              - set(attributes["otel_exporter"], "OTLP")
+              - set(attributes["kube_job"], "kubernetes-logs")
+              - set(attributes["kube_namespace"], "unknown")
+              - set(attributes["kube_pod"], "unknown")
+              - set(attributes["namespace"], "unknown")
+              - set(attributes["pod"], "unknown")
+              
+              # Extract from fluent.tag if present
+              - set(attributes["kube_namespace"], attributes["fluent.tag"]) where attributes["fluent.tag"] != nil
+              - replace_pattern(attributes["kube_namespace"], "^kube\\.var\\.log\\.pods\\.([^/_]+)_.+$", "$1") where attributes["kube_namespace"] != nil
+              
+              - set(attributes["kube_pod"], attributes["fluent.tag"]) where attributes["fluent.tag"] != nil
+              - replace_pattern(attributes["kube_pod"], "^kube\\.var\\.log\\.pods\\.[^/_]+_(.*)_[a-f0-9\\-]+\\..+$", "$1") where attributes["kube_pod"] != nil
+
+              # Override with specific attributes if they exist (from Fluent Bit lift)
+              - set(attributes["kube_namespace"], attributes["k8s.namespace_name"]) where attributes["k8s.namespace_name"] != nil
+              - set(attributes["kube_pod"], attributes["k8s.pod_name"]) where attributes["k8s.pod_name"] != nil
+              - set(attributes["container"], attributes["k8s.container_name"]) where attributes["k8s.container_name"] != nil
+              
+              # Alias for dashboard compatibility
+              - set(attributes["namespace"], attributes["kube_namespace"])
+              - set(attributes["pod"], attributes["kube_pod"])
+              
+              # Also keep them in Resource for good measure
+              - set(resource.attributes["otel_exporter"], attributes["otel_exporter"])
+              - set(resource.attributes["kube_namespace"], attributes["kube_namespace"])
+              - set(resource.attributes["kube_pod"], attributes["kube_pod"])
 
     exporters:
       # Export traces to Tempo (pointing to the distributor)
       otlp/tempo:
-        endpoint: tempo-distributor.observability.svc.cluster.local:4317
+        endpoint: tempo.observability.svc.cluster.local:4317
         tls:
           insecure: true
 
-      # Export logs to Loki
-      loki:
-        endpoint: http://loki.observability.svc.cluster.local:3100/loki/api/v1/push
+      # Export logs to Loki using OTLP/HTTP directly
+      otlphttp/loki:
+        endpoint: http://loki.observability.svc.cluster.local:3100/otlp
+        tls:
+          insecure: true
 
       # Export metrics to local OTel log (useful for debugging)
-      logging:
-        loglevel: info
+      debug:
+        verbosity: detailed
 
     service:
       pipelines:
@@ -48,10 +87,10 @@ data:
           processors: [resourcedetection, k8sattributes, batch]
           exporters: [otlp/tempo]
         logs:
-          receivers: [otlp]
-          processors: [resourcedetection, k8sattributes, batch]
-          exporters: [loki]
+          receivers: [otlp, fluentforward]
+          processors: [resourcedetection, transform, batch]
+          exporters: [otlphttp/loki, debug]
         metrics:
           receivers: [otlp]
           processors: [resourcedetection, k8sattributes, batch]
-          exporters: [logging]
+          exporters: [debug]

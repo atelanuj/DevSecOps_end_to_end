@@ -8,7 +8,7 @@ data:
     [SERVICE]
         Flush        5
         Daemon       Off
-        Log_Level    info
+        Log_Level    debug
         Parsers_File parsers.conf
 
     # =========================================
@@ -18,19 +18,13 @@ data:
     # Logs from Kubernetes containers
     [INPUT]
         Name        tail
-        Path        /var/log/containers/*.log
-        Tag         kube.*
-        Parser      docker
-        DB          /var/log/flb_kube.db
-        Mem_Buf_Limit 5MB
-        Skip_Long_Lines On
-
-    # Prometheus metrics
-    [INPUT]
-        Name        prometheus_scrape
-        Tag         metrics.kube
-        Listen      0.0.0.0
-        Port        9102
+        Path                /var/log/pods/*/*/*.log
+        Exclude_Path        /var/log/pods/observability_*/*/*.log
+        Tag                 kube.*
+        Parser              docker
+        DB                  /var/log/flb_kube.db
+        Mem_Buf_Limit       20MB
+        Skip_Long_Lines     On
 
     # OpenTelemetry input (Receives traces/logs from apps)
     [INPUT]
@@ -45,23 +39,33 @@ data:
 
     # Add Kubernetes metadata to logs
     [FILTER]
-        Name        kubernetes
-        Match       kube.*
-        Merge_Log   On
-        Keep_Log    Off
+        Name                kubernetes
+        Match               kube.*
+        Kube_Tag_Prefix     kube.var.log.pods.
+        Regex_Parser        k8s-tag-parser
+        Merge_Log           On
+        K8S-Logging.Parser  On
+        K8S-Logging.Exclude Off
+
+    # Flatten the kubernetes metadata to make it OTLP attribute friendly
+    [FILTER]
+        Name          nest
+        Match         kube.*
+        Operation     lift
+        Nested_under  kubernetes
+        Add_prefix    k8s.
 
     # =========================================
     # OUTPUTS
     # =========================================
 
-    # Centralized output: Forward EVERYTHING to OTEL Collector
-    # The OTEL Collector will then route logs to Loki and traces to Tempo
+    # Forward to OTEL Collector using Fluent Forward protocol
+    # This is often more reliable than OTLP for preserving all metadata
     [OUTPUT]
-        Name        opentelemetry
-        Match       *
-        Host        otel-collector.observability.svc.cluster.local
-        Port        4317
-        tls         Off
+        Name          forward
+        Match         *
+        Host          otel-collector.observability.svc.cluster.local
+        Port          24224
 
     # Expose Prometheus metrics for scraping by Prometheus server
     [OUTPUT]
@@ -70,6 +74,11 @@ data:
         Host        0.0.0.0
         Port        9999
 
+    # Debug: Print everything to stdout
+    [OUTPUT]
+        Name        stdout
+        Match       *
+
 
   parsers.conf: |
     [PARSER]
@@ -77,3 +86,8 @@ data:
         Format      json
         Time_Key    time
         Time_Format %Y-%m-%dT%H:%M:%S.%L
+
+    [PARSER]
+        Name        k8s-tag-parser
+        Format      regex
+        Regex       ^(?<namespace_name>[^_]+)_(?<pod_name>[^_]+)_(?<uid>[a-f0-9\-]+)\.(?<container_name>[^\.]+)\.(?<stream>\d+)\.log$

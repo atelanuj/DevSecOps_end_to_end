@@ -14,6 +14,7 @@ spec:
       labels:
         app: otel-collector
     spec:
+      serviceAccountName: otel-collector-sa
       containers:
       - name: otel-collector
         image: otel/opentelemetry-collector-contrib:latest
@@ -23,6 +24,7 @@ spec:
           - containerPort: 4317
           - containerPort: 4318
           - containerPort: 8889
+          - containerPort: 24224
         volumeMounts:
           - name: config
             mountPath: /conf
@@ -47,3 +49,5 @@ spec:
       port: 4318
     - name: metrics
       port: 8889
+    - name: fluentforward
+      port: 24224

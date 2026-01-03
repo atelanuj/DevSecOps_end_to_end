@@ -56,6 +56,8 @@ kubectl apply -f fluent-bit-daemonset.yaml -n observability
 ## Step 7: Update Application Manifests
 Finally, apply the updated application manifests (ensure they contain the OTel environment variables).
 ```bash
+kubectl apply -f ../kubernetes/mongodb.yaml
+kubectl apply -f ../kubernetes/redis.yaml
 kubectl apply -f ../kubernetes/backend.yaml
 kubectl apply -f ../kubernetes/frontend.yaml
 ```

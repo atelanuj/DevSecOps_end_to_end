@@ -28,7 +28,7 @@ data:
         uid: tempo-ds
         type: tempo
         access: proxy
-        url: http://tempo-query-frontend.observability.svc.cluster.local:3100
+        url: http://tempo.observability.svc.cluster.local:3200
         jsonData:
           # Optional: configure additional Tempo options here
           # tracesToLogsV2:
