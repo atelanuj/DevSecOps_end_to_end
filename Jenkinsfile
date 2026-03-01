@@ -9,7 +9,6 @@ pipeline {
         DOCKER_USERNAME = credentials('DOCKER_USERNAME')
         DOCKERHUB_PASS  = credentials('DOCKERHUB_PASS')
         GITHUB_TOKEN    = credentials('GITHUB_TOKEN') // for SonarQube scan if needed
-        PASSWORD        = "anuj@123"
     }
 
     options {
