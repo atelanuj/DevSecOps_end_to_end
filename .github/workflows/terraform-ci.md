@@ -2,6 +2,20 @@ This markdown file contains a series of **HashiCorp Vault** commands designed to
 
 The ultimate goal of this setup is to allow your GitHub Actions workflows to securely ask Vault for temporary, short-lived AWS credentials to execute Terraform code, without you having to hardcode any long-lived secret keys into GitHub.
 
+# Prerequisites
+```bash
+vault secrets enable aws
+```
+This command enables the **AWS Secrets Engine** in Vault. This engine is responsible for dynamically generating and managing AWS credentials.
+
+```bash
+vault write aws/config/root \
+    access_key="<aws_access_key>" \
+    secret_key="<aws_secret_key>" \
+    region="us-east-1"
+```
+With this command, you are essentially handing over the master keys (Access Key and Secret Key) of an AWS IAM user or role to Vault. Vault will now use these credentials to act as that IAM user/role on your behalf. It will **dynamically generate short-lived credentials** based on the policies you define later.
+
 ### 1. Enable JWT Auth
 ```bash
 vault auth enable jwt
