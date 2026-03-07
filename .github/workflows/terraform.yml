@@ -1,31 +1,31 @@
-name: Terraform Deployment
-on: [push]
+# name: Terraform Deployment
+# on: [push]
 
-permissions:
-  id-token: write
-  contents: read
+# permissions:
+#   id-token: write
+#   contents: read
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./terraform
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: ./terraform
 
-    steps:
-      - uses: actions/checkout@v4
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name: Fetch Keys from Vault
-        uses: hashicorp/vault-action@v3
-        with:
-          url: http://[IP_ADDRESS]:8200
-          role: gh-actions-role
-          method: jwt
-          secrets: | # pragma: allowlist secret
-            aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
-            aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
+#       - name: Fetch Keys from Vault
+#         uses: hashicorp/vault-action@v3
+#         with:
+#           url: http://[IP_ADDRESS]:8200
+#           role: gh-actions-role
+#           method: jwt
+#           secrets: | # pragma: allowlist secret
+#             aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
+#             aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
 
-      - uses: hashicorp/setup-terraform@v3
-      - run: terraform init
-      - run: terraform plan
-      - run: terraform apply -auto-approve
+#       - uses: hashicorp/setup-terraform@v3
+#       - run: terraform init
+#       - run: terraform plan
+#       - run: terraform apply -auto-approve
