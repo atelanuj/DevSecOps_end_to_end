@@ -1,5 +1,5 @@
 name: Terraform Deployment
-on: [push]
+on: [push, workflow_dispatch]
 
 permissions:
   id-token: write
