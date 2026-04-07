@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Terraform
+        working-directory: ./Terraform/EC2 + VPC + EKS
 
     steps:
       - uses: actions/checkout@v4
