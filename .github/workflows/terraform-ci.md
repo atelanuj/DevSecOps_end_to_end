@@ -47,8 +47,8 @@ This command turns on the JWT (JSON Web Token) authentication engine in your Vau
 ### 2. Configure JWT Auth
 ```bash
 vault write auth/jwt/config \
-    bound_issuer = "https://token.actions.githubusercontent.com" \
-    oidc_discovery_url = "https://token.actions.githubusercontent.com"
+    bound_issuer="https://token.actions.githubusercontent.com" \
+    oidc_discovery_url="https://token.actions.githubusercontent.com"
 ```
 This tells Vault to trust GitHub as an Identity Provider. It effectively says: *"If someone comes to authenticate and presents a JWT token that was issued by `token.actions.githubusercontent.com`, you can cryptographically verify it and trust it."*
 
