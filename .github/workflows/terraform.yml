@@ -32,6 +32,8 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}"
 
       - uses: hashicorp/setup-terraform@v3
+      - run: pwd
+      - run: ls -l
       - run: terraform init
       - run: terraform plan
       - run: terraform apply -auto-approve
