@@ -1,7 +1,7 @@
 name: Terraform Deployment
 on:
-  push:
-  workflow_dispatch:
+  push: # Trigger on push
+  workflow_dispatch: # Trigger manually
 
 permissions:
   id-token: write
