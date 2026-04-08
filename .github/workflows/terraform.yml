@@ -21,7 +21,7 @@ jobs:
         uses: hashicorp/vault-action@v3
         with:
         #   url: http://[IP_ADDRESS]:8200
-          url: http://ec2-13-235-0-46.ap-south-1.compute.amazonaws.com:8200
+          url: http://13.235.0.46:8200
           role: gh-actions-role
           method: jwt
           secrets: | # pragma: allowlist secret
