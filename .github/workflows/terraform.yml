@@ -28,6 +28,11 @@ jobs:
             aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
             aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
 
+      - name: Debug JWT
+        run: |
+          echo "${ACTIONS_ID_TOKEN_REQUEST_URL}"
+          echo "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"
+
       - uses: hashicorp/setup-terraform@v3
       - run: terraform init
       - run: terraform plan
