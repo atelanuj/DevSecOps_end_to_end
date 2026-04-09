@@ -84,11 +84,16 @@
 
 
 # Create S3 Bucket and Upload Object
-module "s3_bucket" {
-  source = "./modules/S3"
+# module "s3_bucket" {
+#   source = "./modules/S3"
 
-  bucket_name   = "anuj-terraform-bucket-2511"
-  object_key    = "D:\\index.html"
-  object_source = "D:\\index.html"
-  bucket_env    = "dev"
+#   bucket_name   = "anuj-terraform-bucket-2511"
+#   object_key    = "D:\\index.html"
+#   object_source = "D:\\index.html"
+#   bucket_env    = "dev"
+# }
+
+
+module "ec2_instance" {
+  source = "./modules/ec2"
 }

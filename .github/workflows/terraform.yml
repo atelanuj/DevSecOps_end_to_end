@@ -21,21 +21,14 @@ jobs:
         uses: hashicorp/vault-action@v3
         with:
         #   url: http://[IP_ADDRESS]:8200
-          url: http://13.235.0.46:8200
+          url: http://43.205.144.15:8200
           role: gh-actions-role
           method: jwt
-          secrets: | # pragma: allowlist secret
+          secrets: | # pragma: allowlist secret`
             aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
             aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
 
-      - name: Print the Creds
-        run: |
-          echo "AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}"
-          echo "AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}"
-
       - uses: hashicorp/setup-terraform@v3
-      - run: pwd
-      - run: ls -l
       - run: terraform init
       - run: terraform plan
       - run: terraform apply -auto-approve
