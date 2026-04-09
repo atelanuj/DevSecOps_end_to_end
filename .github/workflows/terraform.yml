@@ -28,6 +28,7 @@ jobs:
           secrets: | # pragma: allowlist secret`
             aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
             aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
+          logLevel: debug
 
       - name: Debug JWT
         run: |
