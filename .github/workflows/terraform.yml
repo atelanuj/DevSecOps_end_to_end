@@ -30,10 +30,13 @@ jobs:
             aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
           logLevel: debug
 
-      - name: Debug JWT
+      - name: Debug JWT Claims
         run: |
-          echo "${ACTIONS_ID_TOKEN_REQUEST_URL}"
-          echo "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}"
+          TOKEN=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+          "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://github.com" | jq -r .value)
+
+          echo "----- JWT PAYLOAD -----"
+          echo $TOKEN | cut -d "." -f2 | base64 -d | jq
 
       - uses: hashicorp/setup-terraform@v3
       - run: terraform init
