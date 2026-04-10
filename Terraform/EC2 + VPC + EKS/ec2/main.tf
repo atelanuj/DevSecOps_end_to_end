@@ -9,3 +9,10 @@ resource "aws_instance" "vault-ec2" {
     Name = "Vault-Terraform-EC2-by-assumed-role"
   }
 }
+
+resource "aws_s3_bucket" "vault-s3" {
+  bucket = "vault-s3-bucket-by-assumed-role123456"
+  tags = {
+    Name = "Vault-Terraform-S3-Bucket-by-assumed-role"
+  }
+}

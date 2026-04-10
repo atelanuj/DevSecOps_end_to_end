@@ -2,6 +2,16 @@ name: Terraform Deployment
 on:
   push: # Trigger on push
   workflow_dispatch: # Trigger manually
+    inputs:
+      Operation:
+        description: "Operation to perform"
+        required: true
+        default: "apply"
+        type: choice
+        options:
+          - apply
+          - plan
+          - destroy
 
 permissions:
   id-token: write
@@ -46,9 +56,15 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan
+        if: github.event.inputs.Operation == 'plan'
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+        if: github.event.inputs.Operation == 'apply'
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
+        if: github.event.inputs.Operation == 'destroy'
 
       # - name: Fetch Keys from Vault
       #   uses: hashicorp/vault-action@v3
