@@ -1,6 +1,10 @@
 name: Terraform Deployment
 on:
   # push: # Trigger on pus
+  # workflow_run:
+  #   workflows: ["Gitleaks Scan"]
+  #   types:
+  #     - completed
   workflow_dispatch: # Trigger manually
     inputs:
       Operation:

@@ -1,4 +1,4 @@
-name: gitleaks
+name: Gitleaks Scan
 on:
   pull_request:
   push:
