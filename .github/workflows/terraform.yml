@@ -21,6 +21,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Vault CLI
+        run: |
+          wget -O vault.zip https://releases.hashicorp.com/vault/1.16.1/vault_1.16.1_linux_amd64.zip
+          unzip vault.zip
+          sudo mv vault /usr/local/bin/
+
       - name: Authenticate to Vault
         run: |
           export VAULT_ADDR=${{ env.VAULT_ADDR }}
@@ -29,12 +35,15 @@ jobs:
       - name: Get AWS Credentials from Vault
         run: |
           CREDS=$(vault read -format=json aws/creds/ec2-role)
-          export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r .data.access_key)
-          export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r .data.secret_key)
-          export AWS_SESSION_TOKEN=$(echo $CREDS | jq -r .data.security_token)
+          echo "AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r .data.access_key)" >> "$GITHUB_ENV"
+          echo "AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r .data.secret_key)" >> "$GITHUB_ENV"
+          echo "AWS_SESSION_TOKEN=$(echo $CREDS | jq -r .data.security_token)" >> "$GITHUB_ENV"
 
       - name: Terraform Init
         run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
