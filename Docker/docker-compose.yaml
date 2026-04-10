@@ -1,0 +1,14 @@
+version: '3'
+services:
+  ubuntu-dind:
+    image: anujatel/ubuntu-dind:v2
+    build: ./Dockerfile-Dind-ubuntu-mlops
+    container_name: ubuntu-dind
+    volumes:
+      - ${PWD}:/app
+    working_dir: /app
+    command: [ "bash" ]
+    privileged: true # to run docker commands inside the container
+    stdin_open: true # interactive
+    tty: true # tty
+    network_mode: host

@@ -1,0 +1,9 @@
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-02d26659fd82cf299
+      KeyName: DevOps
+      SecurityGroupIds:
+        - sg-094ba8d1fd773149a

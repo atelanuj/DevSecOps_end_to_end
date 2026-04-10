@@ -1,0 +1,30 @@
+# Terraform Commands
+
+- `terraform init -recofigure` reinitialize the working directory and ignore backend configuration.
+- `terraform fmt --recursive` Also format files in subdirectories
+- `terraform fmt --diff` Display differences between original configurationi file and formatting changes.
+- `terraform fmt --check` Useful in automation [CI/CD pipelines](https://spacelift.io/blog/terraform-in-ci-cd), the check flag can be used to ensure the configuration files are formatted correctly, if not the exit status will be non-zero. If files are formatted correctly, the exit status will be zero.
+- `terraform validate -json` command is used to validate a Terraform configuration and output the results in JSON format.
+- `terraform plan --out=<path>` Save the plan file to a given path. Can then be passed to the terraform apply command.
+- `terraform plan -destroy` Create a plan to destroy all objects rather than the usual actions.
+- `terraform apply --auto-approve` Apply changes without having to interactively type ‘yes’ to the plan. Useful in automation CI/CD pipelines.
+- `terraform apply -lock=false`Do not hold a state lock during the Terraform apply operation. Use with caution if other engineers might run concurrent commands against the same workspace.
+- `terraform apply <PlanFileNmae>` Provide the file generated using the terraform plan -out command. If provided, Terraform will take the actions in the plan without any confirmation prompts.
+- `terraform apply -target="module.appgw.0"` Apply changes only to the targeted resource.
+- `terraform apply -var="environment=dev"`Pass in a variable value
+- `terraform apply -var-file="varfile.tfvars"` Pass in variables contained in a file.
+- `terraform destroy -target="module.appgw.resource[\"key\"]"` — Destroy an instance of a resource created with for_each.
+- `terraform import <api.code_name> <i-abcd>` Imports existing infrastructure into terraform state file
+- `terraform refresh` Modify the state file with updated metadata containing information on the resources being managed in Terraform. Will not modify your infrastructure
+- `terraform state` — One of the following subcommands must be used with this command in order to manipulate the state file.
+    - `terraform state list` — Lists out all the resources that are tracked in the current state file.
+    - `terraform state pull > state.tfstate` — Get the current state and outputs it to a local file.
+    - `terraform state push` — Update remote state from the local state file.
+    - `terraform state replace-provider hashicorp/azurerm customproviderregistry/azurerm` — Replace a provider, useful when switching to using a custom provider registry.
+    - `terraform state rm` — Remove the specified instance from the state file. Useful when a resource has been manually deleted outside of Terraform.
+    - `terraform show` :provides a human-readable output from a state or plan file.
+    - `terraform state show <resourcename>` — Show the specified resource in the state file.
+- terraform graph — Produce a graph in DOT language showing the dependencies between objects in the state file. This can then be rendered by a program called Graphwiz (amongst others).
+    - `terraform graph -plan=tfplan` — Produce a dependency graph using a specified plan file (generated using terraform plan -out=tfplan).
+    - `terraform graph -type=plan` — Specify the type of graph to output, either plan, plan-refresh-only, plan-destroy, or apply.
+    - `terraform graph -draw-cycles` — You can see if there are any dependency cycles between
