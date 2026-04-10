@@ -7,6 +7,10 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  VAULT_ADDR: http://3.111.149.232:8200
+  VAULT_TOKEN: admin
+
 jobs:
   Terraform_deploy:
     runs-on: ubuntu-latest
@@ -17,28 +21,46 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch Keys from Vault
-        uses: hashicorp/vault-action@v3
-        with:
-        #   url: http://[IP_ADDRESS]:8200
-          url: http://43.205.144.15:8200
-          role: gh-actions-role
-          method: jwt
-          # jwtGithubAudience: "https://github.com"
-          secrets: | # pragma: allowlist secret`
-            aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
-            aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
-          logLevel: debug
-
-      - name: Debug JWT Claims
+      - name: Authenticate to Vault
         run: |
-          TOKEN=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-          "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://github.com" | jq -r .value)
+          export VAULT_ADDR=${{ env.VAULT_ADDR }}
+          vault login ${{ env.VAULT_TOKEN }}
 
-          echo "----- JWT PAYLOAD -----"
-          echo $TOKEN | cut -d "." -f2 | base64 -d | jq
+      - name: Get AWS Credentials from Vault
+        run: |
+          CREDS=$(vault read -format=json aws/creds/ec2-role)
+          export AWS_ACCESS_KEY_ID=$(echo $CREDS | jq -r .data.access_key)
+          export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r .data.secret_key)
+          export AWS_SESSION_TOKEN=$(echo $CREDS | jq -r .data.security_token)
 
-      - uses: hashicorp/setup-terraform@v3
-      - run: terraform init
-      - run: terraform plan
-      - run: terraform apply -auto-approve
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+      # - name: Fetch Keys from Vault
+      #   uses: hashicorp/vault-action@v3
+      #   with:
+      #   #   url: http://[IP_ADDRESS]:8200
+      #     url: http://43.205.144.15:8200
+      #     role: gh-actions-role
+      #     method: jwt
+      #     # jwtGithubAudience: "https://github.com"
+      #     secrets: | # pragma: allowlist secret`
+      #       aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
+      #       aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
+      #     logLevel: debug
+
+      # - name: Debug JWT Claims
+      #   run: |
+      #     TOKEN=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+      #     "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://github.com" | jq -r .value)
+
+      #     echo "----- JWT PAYLOAD -----"
+      #     echo $TOKEN | cut -d "." -f2 | base64 -d | jq
+
+      # - uses: hashicorp/setup-terraform@v3
+      # - run: terraform init
+      # - run: terraform plan
+      # - run: terraform apply -auto-approve
