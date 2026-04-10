@@ -1,4 +1,4 @@
-name: Terraform Deployment # refer terraform.yml for manual trigger
+name: Terraform Deployment S3 # refer terraform.yml for manual trigger
 on:
   push: # Trigger on push
 
