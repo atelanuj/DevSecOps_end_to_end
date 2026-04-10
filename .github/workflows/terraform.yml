@@ -39,6 +39,8 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r .data.secret_key)" >> "$GITHUB_ENV"
           echo "AWS_SESSION_TOKEN=$(echo $CREDS | jq -r .data.security_token)" >> "$GITHUB_ENV"
 
+      - uses: hashicorp/setup-terraform@v3
+      
       - name: Terraform Init
         run: terraform init
 
