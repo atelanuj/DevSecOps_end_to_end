@@ -1,0 +1,36 @@
+name: Terraform Deployment # refer terraform.yml for manual trigger
+on:
+  push: # Trigger on push
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  VAULT_ADDR: http://3.111.149.232:8200
+  VAULT_TOKEN: admin
+
+jobs:
+  Terraform_deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Terraform/EC2 + VPC + EKS
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Keys from Vault
+        uses: hashicorp/vault-action@v3
+        with:
+          url: http://43.205.144.15:8200
+          role: gh-actions-role
+          method: jwt
+          secrets: | # pragma: allowlist secret`
+            aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
+            aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
+
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init
+      - run: terraform plan
+      - run: terraform apply -auto-approve

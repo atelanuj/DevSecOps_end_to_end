@@ -1,4 +1,4 @@
-name: Terraform Deployment
+name: Terraform Deployment EC2 # Refer terraform-ci-ec2.yaml for reference
 on:
   # push: # Trigger on pus
   # workflow_run:
@@ -69,29 +69,3 @@ jobs:
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
         if: github.event.inputs.Operation == 'destroy'
-
-      # - name: Fetch Keys from Vault
-      #   uses: hashicorp/vault-action@v3
-      #   with:
-      #   #   url: http://[IP_ADDRESS]:8200
-      #     url: http://43.205.144.15:8200
-      #     role: gh-actions-role
-      #     method: jwt
-      #     # jwtGithubAudience: "https://github.com"
-      #     secrets: | # pragma: allowlist secret`
-      #       aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
-      #       aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
-      #     logLevel: debug
-
-      # - name: Debug JWT Claims
-      #   run: |
-      #     TOKEN=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-      #     "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://github.com" | jq -r .value)
-
-      #     echo "----- JWT PAYLOAD -----"
-      #     echo $TOKEN | cut -d "." -f2 | base64 -d | jq
-
-      # - uses: hashicorp/setup-terraform@v3
-      # - run: terraform init
-      # - run: terraform plan
-      # - run: terraform apply -auto-approve
