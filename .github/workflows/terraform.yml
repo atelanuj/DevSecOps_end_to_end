@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./Terraform/EC2 + VPC + EKS
+        working-directory: ./Terraform/EC2 + VPC + EKS/ec2
 
     steps:
       - uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
           echo "AWS_SESSION_TOKEN=$(echo $CREDS | jq -r .data.security_token)" >> "$GITHUB_ENV"
 
       - uses: hashicorp/setup-terraform@v3
-      
+
       - name: Terraform Init
         run: terraform init
 
