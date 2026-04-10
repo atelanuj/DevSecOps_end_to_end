@@ -1,6 +1,6 @@
 name: Terraform Deployment
 on:
-  push: # Trigger on pus
+  push: # Trigger on push
   workflow_dispatch: # Trigger manually
 
 permissions:
